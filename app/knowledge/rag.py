@@ -42,7 +42,7 @@ async def retrieve_evidence(question, top_claims=10, top_passages=4):
     for passage in store.search_chunks(question, k=20):
         words = set(re.findall(r"\b\w{3,}\b", passage["text"].lower()))
         overlap = len(terms & words)
-        if overlap < min(2, len(terms)) or not terms:
+        if overlap < min(1, len(terms)) or not terms:
             continue
         results.append(
             dict(
@@ -63,16 +63,16 @@ async def answer_rag(question, auto_research=False):
     # Compatibility argument intentionally cannot enable web access from a call.
     seed_data.seed_knowledge_base()
     evidence = await retrieve_evidence(question)
-    accepted = evidence[:1]
+    accepted = evidence[:3]
     answer = [
         {
-            "id": "a1",
+            "id": f"a{i+1}",
             "text": e["text"],
             "cites": [e["id"]],
             "source_info": f"{e['title']} ({e['url']})",
             "ruling": "supported",
         }
-        for e in accepted
+        for i, e in enumerate(accepted)
     ]
     summary = (
         answer[0]["text"]

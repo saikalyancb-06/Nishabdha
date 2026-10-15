@@ -870,7 +870,10 @@ class CallSession:
             else:
                 await self.say(t("greeting", self.lang))
         elif it in ("unknown", "confirm_yes", "confirm_no", "provide_info"):
-            await self.say(t("fallback", self.lang))
+            if nlu.reply:
+                await self.say(nlu.reply, localize_dynamic=nlu.source != "llm")
+            else:
+                await self.say(t("fallback", self.lang))
         else:
             await self._start_action(nlu, audio, t_start, t_end)
 
