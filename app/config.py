@@ -38,22 +38,30 @@ class Settings(BaseSettings):
     llm_model: str = ""  # empty -> provider default
     llm_timeout_s: float = 8.0
     groq_api_key: str = ""
+    groq_api_key1: str = ""
+    groq_api_key2: str = ""
+    groq_api_key3: str = ""
     openai_api_key: str = ""
     anthropic_api_key: str = ""
     gemini_api_key: str = ""
+    sarvam_api_key: str = ""
+    sarvam_ai_api: str = ""
 
     # ---------------- Speech-to-text ----------------
-    stt_provider: Literal["groq", "local", "none"] = "groq"
-    stt_fallback: Literal["local", "none"] = "local"
+    stt_provider: Literal["sarvam", "groq", "local", "none"] = "sarvam"
+    stt_fallback: Literal["groq", "local", "none"] = "groq"
     groq_stt_model: str = "whisper-large-v3-turbo"
+    sarvam_stt_model: str = "saaras:v4"
     local_whisper_model: str = "small"  # tiny/base/small/medium (multilingual)
     stt_timeout_s: float = 12.0
 
     # ---------------- Text-to-speech ----------------
-    tts_provider: Literal["edge", "none"] = "edge"
+    tts_provider: Literal["sarvam", "edge", "none"] = "sarvam"
     tts_timeout_s: float = (
         15.0  # slow venue Wi-Fi: edge-tts can take >8 s for the first byte
     )
+    sarvam_tts_model: str = "bulbul:v3"
+    sarvam_tts_speaker: str = "shreya"
     tts_voice_en: str = "en-IN-NeerjaNeural"
     tts_voice_hi: str = "hi-IN-SwaraNeural"
     tts_voice_kn: str = "kn-IN-SapnaNeural"
@@ -87,6 +95,7 @@ class Settings(BaseSettings):
     detectifai_extra_json: str = ""  # optional JSON merged into every request body/form
 
     # Local backup models
+    device: Literal["auto", "cuda", "cpu"] = "auto"
     model_dir: Path = BASE_DIR / "models"
     local_speaker_model: str = "speechbrain/spkrec-ecapa-voxceleb"
     # Benchmarked 5 open models on 3 s chunks (74 real / 23 TTS): open detectors are weak on short chunks.
@@ -167,6 +176,34 @@ class Settings(BaseSettings):
     @property
     def spoof_model_list(self) -> list[str]:
         return [m.strip() for m in self.local_spoof_models.split(",") if m.strip()]
+
+    @property
+    def resolved_device(self) -> str:
+        if self.device == "auto":
+            try:
+                import torch
+
+                return "cuda" if torch.cuda.is_available() else "cpu"
+            except Exception:
+                return "cpu"
+        return self.device
+
+    @property
+    def effective_sarvam_key(self) -> str:
+        return (self.sarvam_api_key or self.sarvam_ai_api or "").strip()
+
+    @property
+    def groq_keys(self) -> list[str]:
+        keys = []
+        for k in (self.groq_api_key, self.groq_api_key1, self.groq_api_key2, self.groq_api_key3):
+            if k and k.strip() and k.strip() not in keys:
+                keys.append(k.strip())
+        return keys
+
+    @property
+    def effective_groq_key(self) -> str:
+        keys = self.groq_keys
+        return keys[0] if keys else ""
 
     def voice_for(self, lang: str) -> str:
         return {"hi": self.tts_voice_hi, "kn": self.tts_voice_kn}.get(

@@ -213,7 +213,7 @@ def test_decide_matrix():
         ).outcome
         == "stepup"
     )
-    # not enrolled -> step-up
+    # unenrolled caller: tier 2 requires independent step-up verification
     assert (
         decide(2, good, enrolled=False, voice_locked=False, pressure=0).outcome
         == "stepup"

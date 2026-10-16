@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.api import agents, calls, copilot, customer_app, knowledge, passkeys, staff, ws
+from app.api import agents, calls, copilot, customer_app, judge_demo, knowledge, passkeys, staff, ws
 from app.config import get_settings
 from app.core.session import SESSIONS
 from app.db import engine, init_db
@@ -98,6 +98,7 @@ app.include_router(ws.router)
 app.include_router(passkeys.router)
 app.include_router(agents.router)
 app.include_router(copilot.router)
+app.include_router(judge_demo.router)
 
 
 @app.get("/health", tags=["system"])
@@ -111,6 +112,7 @@ async def health_check():
         "env": s.app_env,
         "voice_engine": get_voice_engine().chain,
         "knowledge_store": store.get_stats(),
+        "demo_staff_key": s.staff_api_key if s.app_env != "prod" else "",
     }
 
 

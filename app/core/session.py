@@ -1012,8 +1012,7 @@ class CallSession:
         p.evidence_checked_at = 0.0
         p.request_audio_hash = ""
         if (
-            not self.enrolled
-            or audio is None
+            audio is None
             or audio.size < SR * self.s.min_chunk_seconds
         ):
             return False
@@ -1055,6 +1054,8 @@ class CallSession:
         return self._request_evidence_valid(p)
 
     def _request_evidence_valid(self, p: Pending, *, transfer: bool = False) -> bool:
+        if transfer and not self.enrolled:
+            return False
         allowed = {"detectifai"}
         if self.s.app_env == "test":
             allowed.add("mock")
@@ -1062,6 +1063,11 @@ class CallSession:
             allowed.add("mock")
         e = p.request_evidence
         sp, sy = e.get("speaker_prob"), e.get("synthetic_prob")
+        speaker_ok = (
+            (self.s.tier1_min_trust <= sp <= 1)
+            if (self.enrolled and sp is not None)
+            else True
+        )
         return bool(
             p.evidence_status in allowed
             and e.get("audio_hash") == p.request_audio_hash
@@ -1069,10 +1075,9 @@ class CallSession:
             and e.get("action_id") == p.action_id
             and e.get("call_id") == self.call_id
             and 0 <= time.monotonic() - p.evidence_checked_at <= 120
-            and sp is not None
             and sy is not None
-            and self.s.tier1_min_trust <= sp <= 1
             and 0 <= sy < self.s.synthetic_soft
+            and speaker_ok
         )
 
     async def _hold_pending(self, reason: str):
@@ -1478,8 +1483,6 @@ class CallSession:
             },
             to_caller=False,
         )
-        if not self.enrolled:
-            await self.say(t("not_enrolled", self.lang))
         await self.say(t("stepup", self.lang), kind="stepup", extra={"stepup_id": sid})
 
     async def _stepup_turn(self, text: str):

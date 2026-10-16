@@ -16,12 +16,12 @@ _CUES: list[tuple[str, float, list[str]]] = [
         r"(bega|beega|takshana|ಬೇಗ|ತಕ್ಷಣ|ಈಗಲೇ)",
     ]),
     ("authority_threat", 0.4, [
-        r"\b(police|cyber ?cell|cbi|rbi officer|income tax|arrest(ed)?|legal action|court|warrant|customs|ed officer|digital arrest)\b",
+        r"\b(police|cyber ?cell|cbi|rbi officer|security team|bank security|bank officer|income tax|arrest(ed)?|legal action|court|warrant|customs|ed officer|digital arrest)\b",
         r"(पुलिस|गिरफ्तार|गिरफ़्तार|कानूनी कार्रवाई|डिजिटल अरेस्ट)",
         r"(ಪೊಲೀಸ್|ಬಂಧನ|ಅರೆಸ್ಟ್)",
     ]),
     ("account_threat", 0.3, [
-        r"\b(account (will be|is going to be|gets?) (blocked|frozen|closed|suspended)|kyc (expired|pending|update)|last chance)\b",
+        r"\b(account (will be|is going to be|gets?|is) (blocked|frozen|closed|suspended|at risk|compromised)|account (is )?at risk|kyc (expired|pending|update)|last chance)\b",
         r"(खाता (बंद|ब्लॉक) हो जाएगा|केवाईसी)",
         r"(ಖಾತೆ (ಬ್ಲಾಕ್|ಮುಚ್ಚ))",
     ]),

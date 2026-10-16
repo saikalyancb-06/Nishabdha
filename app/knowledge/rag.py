@@ -40,7 +40,12 @@ async def retrieve_evidence(question, top_claims=10, top_passages=4):
     }
     results = []
     for passage in store.search_chunks(question, k=20):
-        words = set(re.findall(r"\b\w{3,}\b", passage["text"].lower()))
+        words = set(
+            re.findall(
+                r"\b\w{3,}\b",
+                (passage.get("title", "") + " " + passage.get("text", "")).lower(),
+            )
+        )
         overlap = len(terms & words)
         if overlap < min(1, len(terms)) or not terms:
             continue
@@ -52,7 +57,9 @@ async def retrieve_evidence(question, top_claims=10, top_passages=4):
                 provenance="reviewed excerpt",
             )
         )
-    return sorted(results, key=lambda p: p["relevance"], reverse=True)[:top_passages]
+    return sorted(
+        results, key=lambda p: (p["relevance"], p.get("score", 0)), reverse=True
+    )[:top_passages]
 
 
 def is_evidence_adequate(question, ev):

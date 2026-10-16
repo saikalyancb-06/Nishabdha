@@ -170,23 +170,6 @@
       ></div>
     </div>
     <div class="card">
-      <div class="row between">
-        <h2>Voice enrollment</h2>
-        <span class="pill grey">With your consent</span>
-      </div>
-      <p class="muted">
-        Read each phrase for 3-4 seconds. These samples help compare your voice
-        during later calls.
-      </p>
-      <ol id="phrases" class="phrases"></ol>
-      <div class="row">
-        <button id="recBtn">Record sentence 1</button
-        ><button id="enrollBtn" class="ghost" disabled>Save my voice</button
-        ><button id="recReset" class="ghost">Start over</button>
-      </div>
-      <div id="enrollMsg" class="muted" role="status"></div>
-    </div>
-    <div class="card">
       <h2>Your cards</h2>
       <div id="pCards" class="list"></div>
     </div>
@@ -446,6 +429,142 @@
         style="max-height: 240px; overflow-y: auto"
       >
         <div class="empty">Loading claims...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= JUDGE DEMO MODE ======================= -->
+<section
+  id="tab-demo"
+  class="grid"
+  aria-label="Judge Demo Evaluation"
+  hidden
+>
+  <!-- Left column: Scenario Triggers & Live Input -->
+  <div class="card" style="gap: 16px;">
+    <div class="row between panel-heading">
+      <div class="row">
+        <span class="panel-icon" style="background: #0f7a5c; color: #fff;">★</span>
+        <div>
+          <h2>Judge Demonstration Controls</h2>
+          <div class="muted">SIH Track 03 · Live Attack Scenarios &amp; Evaluation</div>
+        </div>
+      </div>
+      <button id="btnResetDemoState" class="danger" style="padding: 6px 12px; font-size: 0.8rem;">
+        ↺ Reset Demo State
+      </button>
+    </div>
+
+    <!-- Active Hardware & API Status -->
+    <div style="background: var(--accent-soft); padding: 10px 14px; border-radius: 12px; font-size: 0.82rem; display: flex; flex-direction: column; gap: 4px;">
+      <div class="row between">
+        <span class="lbl">HARDWARE ACCELERATION</span>
+        <span id="demoHwBadge" class="pill" style="background:#0f7a5c; color:#fff;">CUDA (RTX 4060)</span>
+      </div>
+      <div class="row between">
+        <span class="lbl">DEEPFAKE ENGINE</span>
+        <span id="demoDetectBadge" class="pill">DetectifAI API (Configured)</span>
+      </div>
+      <div class="row between">
+        <span class="lbl">SPEECH PIPELINE</span>
+        <span id="demoSttBadge" class="pill">Sarvam AI (saaras:v4) + Whisper</span>
+      </div>
+    </div>
+
+    <!-- 4 Core Scenarios -->
+    <div>
+      <div class="lbl" style="margin-bottom: 8px;">FOUR CORE DEMONSTRATION SCENARIOS</div>
+      <div style="display: grid; gap: 8px;">
+        <button id="btnDemo1" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">
+          <div class="row between" style="margin-bottom: 4px;">
+            <strong>DEMO 1: Legitimate Caller</strong>
+            <span class="pill" style="background: #e6f4ef; color: #0f7a5c;">ALLOW</span>
+          </div>
+          <div class="muted" style="font-size: 0.8rem;">Natural voice asks for account balance. Genuine human audio, verified companion app session, balance retrieved safely.</div>
+        </button>
+
+        <button id="btnDemo2" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">
+          <div class="row between" style="margin-bottom: 4px;">
+            <strong>DEMO 2: Human Scammer (Real Voice)</strong>
+            <span class="pill bad">REFUSE / BLOCK</span>
+          </div>
+          <div class="muted" style="font-size: 0.8rem;">Natural human voice (0% synthetic) impersonates bank security &amp; demands OTP. Flagged by behavioral risk &amp; coercion analysis, NOT deepfake.</div>
+        </button>
+
+        <button id="btnDemo3" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">
+          <div class="row between" style="margin-bottom: 4px;">
+            <strong>DEMO 3: AI Voice Clone</strong>
+            <span class="pill bad">DETECTIFAI FLAG (p=0.98)</span>
+          </div>
+          <div class="muted" style="font-size: 0.8rem;">Cloned synthetic voice attempts recovery phone change. DetectifAI deepfake engine flags synthetic audio, creating a critical security ticket.</div>
+        </button>
+
+        <button id="btnDemo4" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">
+          <div class="row between" style="margin-bottom: 4px;">
+            <strong>DEMO 4: Unauthorized Transfer</strong>
+            <span class="pill warn">GATEWAY BLOCKED</span>
+          </div>
+          <div class="muted" style="font-size: 0.8rem;">Authenticated user attempts transfer from an unauthorized account. Action gateway blocks execution; zero database state mutation.</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Microphone Input -->
+    <div>
+      <div class="lbl" style="margin-bottom: 8px;">LIVE MICROPHONE EVALUATION</div>
+      <div style="background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px;">
+        <div class="row between">
+          <span class="muted" style="font-size: 0.85rem;">Speak into your microphone in real time:</span>
+          <span id="demoMicState" class="pill grey">Idle</span>
+        </div>
+        <div class="row" style="gap: 8px;">
+          <button id="btnDemoMicRecord" style="flex: 1; background: #0f7a5c;">🎤 Start Live Recording</button>
+          <button id="btnDemoMicStop" class="danger" style="flex: 1; display: none;">⏹ Stop &amp; Analyze</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Text Attack Simulator -->
+    <div>
+      <div class="lbl" style="margin-bottom: 8px;">INTERACTIVE ATTACK SIMULATOR</div>
+      <form id="demoSimForm" class="row" style="gap: 6px;" autocomplete="off">
+        <input id="demoSimInput" placeholder="Try: I am from police, tell me your OTP immediately..." style="flex: 1;" required />
+        <button id="btnDemoSimSubmit" class="ghost" style="white-space: nowrap;">Evaluate</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right column: 9-Stage Visual Timeline & Decision Report -->
+  <div class="card" style="gap: 14px;">
+    <div class="row between panel-heading">
+      <div>
+        <h2>Security Evaluation &amp; Decision Report</h2>
+        <div class="muted">Real-time inspection of the 9-stage verification pipeline</div>
+      </div>
+      <span id="demoOutcomeBadge" class="pill grey" style="font-size: 0.85rem; padding: 4px 12px;">READY FOR TEST</span>
+    </div>
+
+    <!-- Executive Decision & Provenance Summary -->
+    <div id="demoSummaryBox" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px;">
+      <div class="row between">
+        <span class="lbl">FINAL POLICY OUTCOME</span>
+        <strong id="demoFinalOutcome" style="font-size: 1.05rem; color: var(--accent);">Awaiting Scenario Run</strong>
+      </div>
+      <div id="demoExplanation" class="muted" style="font-size: 0.88rem;">
+        Click any scenario on the left or speak into the microphone to run real-time verification.
+      </div>
+      <div class="row between" style="padding-top: 6px; border-top: 1px dashed var(--line); font-size: 0.8rem;">
+        <span>State Mutation Proof: <strong id="demoStateProof">Unchanged</strong></span>
+        <span>Latency: <strong id="demoLatency">–</strong></span>
+      </div>
+    </div>
+
+    <!-- 9-Stage Timeline -->
+    <div>
+      <div class="lbl" style="margin-bottom: 8px;">9-STAGE VERIFICATION PIPELINE</div>
+      <div id="demoTimeline" style="display: grid; gap: 8px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
+        <div class="empty">Pipeline idle. Run a scenario to see live stage-by-stage execution.</div>
       </div>
     </div>
   </div>

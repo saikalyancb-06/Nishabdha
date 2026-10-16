@@ -46,458 +46,577 @@ Error generating stack: `+e.message+`
 `},ca=function(){var e=parseInt(document.body.getAttribute(`data-scroll-locked`)||`0`,10);return isFinite(e)?e:0},la=function(){T.useEffect(function(){return document.body.setAttribute(R,(ca()+1).toString()),function(){var e=ca()-1;e<=0?document.body.removeAttribute(R):document.body.setAttribute(R,e.toString())}},[])},ua=function(e){var t=e.noRelative,n=e.noImportant,r=e.gapMode,i=r===void 0?`margin`:r;la();var a=T.useMemo(function(){return oa(i)},[i]);return T.createElement(L,{styles:sa(a,!t,i,n?``:`!important`)})},da=!1;if(typeof window<`u`)try{var fa=Object.defineProperty({},"passive",{get:function(){return da=!0,!0}});window.addEventListener(`test`,fa,fa),window.removeEventListener(`test`,fa,fa)}catch{da=!1}var pa=da?{passive:!1}:!1,ma=function(e){return e.tagName===`TEXTAREA`},ha=function(e,t){if(!(e instanceof Element))return!1;var n=window.getComputedStyle(e);return n[t]!==`hidden`&&!(n.overflowY===n.overflowX&&!ma(e)&&n[t]===`visible`)},ga=function(e){return ha(e,`overflowY`)},_a=function(e){return ha(e,`overflowX`)},va=function(e,t){var n=t.ownerDocument,r=t;do{if(typeof ShadowRoot<`u`&&r instanceof ShadowRoot&&(r=r.host),xa(e,r)){var i=Sa(e,r);if(i[1]>i[2])return!0}r=r.parentNode}while(r&&r!==n.body);return!1},ya=function(e){return[e.scrollTop,e.scrollHeight,e.clientHeight]},ba=function(e){return[e.scrollLeft,e.scrollWidth,e.clientWidth]},xa=function(e,t){return e===`v`?ga(t):_a(t)},Sa=function(e,t){return e===`v`?ya(t):ba(t)},Ca=function(e,t){return e===`h`&&t===`rtl`?-1:1},wa=function(e,t,n,r,i){var a=Ca(e,window.getComputedStyle(t).direction),o=a*r,s=n.target,c=t.contains(s),l=!1,u=o>0,d=0,f=0;do{if(!s)break;var p=Sa(e,s),m=p[0],h=p[1]-p[2]-a*m;(m||h)&&xa(e,s)&&(d+=h,f+=m);var g=s.parentNode;s=g&&g.nodeType===Node.DOCUMENT_FRAGMENT_NODE?g.host:g}while(!c&&s!==document.body||c&&(t.contains(s)||t===s));return(u&&(i&&Math.abs(d)<1||!i&&o>d)||!u&&(i&&Math.abs(f)<1||!i&&-o>f))&&(l=!0),l},Ta=function(e){return`changedTouches`in e?[e.changedTouches[0].clientX,e.changedTouches[0].clientY]:[0,0]},Ea=function(e){return[e.deltaX,e.deltaY]},Da=function(e){return e&&`current`in e?e.current:e},Oa=function(e,t){return e[0]===t[0]&&e[1]===t[1]},ka=function(e){return`
   .block-interactivity-${e} {pointer-events: none;}
   .allow-interactivity-${e} {pointer-events: all;}
-`},Aa=0,ja=[];function Ma(e){var t=T.useRef([]),n=T.useRef([0,0]),r=T.useRef(),i=T.useState(Aa++)[0],a=T.useState(na)[0],o=T.useRef(e);T.useEffect(function(){o.current=e},[e]),T.useEffect(function(){if(e.inert){document.body.classList.add(`block-interactivity-${i}`);var t=ki([e.lockRef.current],(e.shards||[]).map(Da),!0).filter(Boolean);return t.forEach(function(e){return e.classList.add(`allow-interactivity-${i}`)}),function(){document.body.classList.remove(`block-interactivity-${i}`),t.forEach(function(e){return e.classList.remove(`allow-interactivity-${i}`)})}}},[e.inert,e.lockRef.current,e.shards]);var s=T.useCallback(function(e,t){if(`touches`in e&&e.touches.length===2||e.type===`wheel`&&e.ctrlKey)return!o.current.allowPinchZoom;var i=Ta(e),a=n.current,s=`deltaX`in e?e.deltaX:a[0]-i[0],c=`deltaY`in e?e.deltaY:a[1]-i[1],l,u=e.target,d=Math.abs(s)>Math.abs(c)?`h`:`v`;if(`touches`in e&&d===`h`&&u.type===`range`)return!1;var f=window.getSelection(),p=f&&f.anchorNode;if(p&&(p===u||p.contains(u)))return!1;var m=va(d,u);if(!m)return!0;if(m?l=d:(l=d===`v`?`h`:`v`,m=va(d,u)),!m)return!1;if(!r.current&&`changedTouches`in e&&(s||c)&&(r.current=l),!l)return!0;var h=r.current||l;return wa(h,t,e,h===`h`?s:c,!0)},[]),c=T.useCallback(function(e){var n=e;if(ja.length&&ja[ja.length-1]===a){var r=`deltaY`in n?Ea(n):Ta(n),i=t.current.filter(function(e){return e.name===n.type&&(e.target===n.target||n.target===e.shadowParent)&&Oa(e.delta,r)})[0];if(i&&i.should)n.cancelable&&n.preventDefault();else if(!i){var c=(o.current.shards||[]).map(Da).filter(Boolean).filter(function(e){return e.contains(n.target)});(c.length>0?s(n,c[0]):!o.current.noIsolation)&&n.cancelable&&n.preventDefault()}}},[]),l=T.useCallback(function(e,n,r,i){var a={name:e,delta:n,target:r,should:i,shadowParent:Na(r)};t.current.push(a),setTimeout(function(){t.current=t.current.filter(function(e){return e!==a})},1)},[]),u=T.useCallback(function(e){n.current=Ta(e),r.current=void 0},[]),d=T.useCallback(function(t){l(t.type,Ea(t),t.target,s(t,e.lockRef.current))},[]),f=T.useCallback(function(t){l(t.type,Ta(t),t.target,s(t,e.lockRef.current))},[]);T.useEffect(function(){return ja.push(a),e.setCallbacks({onScrollCapture:d,onWheelCapture:d,onTouchMoveCapture:f}),document.addEventListener(`wheel`,c,pa),document.addEventListener(`touchmove`,c,pa),document.addEventListener(`touchstart`,u,pa),function(){ja=ja.filter(function(e){return e!==a}),document.removeEventListener(`wheel`,c,pa),document.removeEventListener(`touchmove`,c,pa),document.removeEventListener(`touchstart`,u,pa)}},[]);var p=e.removeScrollBar,m=e.inert;return T.createElement(T.Fragment,null,m?T.createElement(a,{styles:ka(i)}):null,p?T.createElement(ua,{noRelative:e.noRelative,gapMode:e.gapMode}):null)}function Na(e){for(var t=null;e!==null;)e instanceof ShadowRoot&&(t=e.host,e=e.host),e=e.parentNode;return t}var Pa=Ki(qi,Ma),Fa=T.forwardRef(function(e,t){return T.createElement(Yi,Ci({},e,{ref:t,sideCar:Pa}))});Fa.classNames=Yi.classNames;var Ia=function(e){return typeof document>`u`?null:(Array.isArray(e)?e[0]:e).ownerDocument.body},La=new WeakMap,Ra=new WeakMap,za={},Ba=0,Va=function(e){return e&&(e.host||Va(e.parentNode))},Ha=function(e,t){return t.map(function(t){if(e.contains(t))return t;var n=Va(t);return n&&e.contains(n)?n:(console.error(`aria-hidden`,t,`in not contained inside`,e,`. Doing nothing`),null)}).filter(function(e){return!!e})},Ua=function(e,t,n,r){var i=Ha(t,Array.isArray(e)?e:[e]);za[n]||(za[n]=new WeakMap);var a=za[n],o=[],s=new Set,c=new Set(i),l=function(e){e&&!s.has(e)&&(s.add(e),l(e.parentNode))};i.forEach(l);var u=function(e){e&&!c.has(e)&&Array.prototype.forEach.call(e.children,function(e){if(s.has(e))u(e);else try{var t=e.getAttribute(r),i=t!==null&&t!==`false`,c=(La.get(e)||0)+1,l=(a.get(e)||0)+1;La.set(e,c),a.set(e,l),o.push(e),c===1&&i&&Ra.set(e,!0),l===1&&e.setAttribute(n,`true`),i||e.setAttribute(r,`true`)}catch(t){console.error(`aria-hidden: cannot operate on `,e,t)}})};return u(t),s.clear(),Ba++,function(){o.forEach(function(e){var t=La.get(e)-1,i=a.get(e)-1;La.set(e,t),a.set(e,i),t||(Ra.has(e)||e.removeAttribute(r),Ra.delete(e)),i||e.removeAttribute(n)}),Ba--,Ba||(La=new WeakMap,La=new WeakMap,Ra=new WeakMap,za={})}},Wa=function(e,t,n){n===void 0&&(n=`data-aria-hidden`);var r=Array.from(Array.isArray(e)?e:[e]),i=t||Ia(e);return i?(r.push.apply(r,Array.from(i.querySelectorAll(`[aria-live], script`))),Ua(r,i,n,`aria-hidden`)):function(){return null}},Ga=Object.defineProperty,Ka=(e,t)=>Ga(e,`name`,{value:t,configurable:!0}),qa=`Dialog`,[Ja,Ya]=Kn(qa),[Xa,Za]=Ja(qa),Qa=Ka(e=>{let{__scopeDialog:t,children:n,open:r,defaultOpen:i,onOpenChange:a,modal:o=!0}=e,s=T.useRef(null),c=T.useRef(null),{nodes:l,registry:u}=Wr(),[d,f]=cr({prop:r,defaultProp:i??!1,onChange:a,caller:qa}),[p,m]=T.useState(0),[h,g]=T.useState(0);return(0,I.jsx)(Xa,{scope:t,triggerRef:s,contentRef:c,contentId:$n(),titleId:$n(),descriptionId:$n(),titlePresent:p>0,descriptionPresent:h>0,setTitleCount:m,setDescriptionCount:g,open:d,onOpenChange:f,onOpenToggle:T.useCallback(()=>f(e=>!e),[f]),modal:o,branchNodes:l,branchRegistry:u,children:n})},`Dialog`),$a=`DialogTrigger`,eo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za($a,n),a=Ie(t,i.triggerRef);return(0,I.jsx)(gr.button,{type:`button`,"aria-haspopup":`dialog`,"aria-expanded":i.open,"aria-controls":i.open?i.contentId:void 0,"data-state":bo(i.open),...r,ref:a,onClick:Rn(e.onClick,i.onOpenToggle)})},`DialogTrigger`)),to=`DialogPortal`,[no,ro]=Ja(to,{forceMount:void 0}),io=Ka(e=>{let{__scopeDialog:t,forceMount:n,children:r,container:i}=e,a=Za(to,t);return(0,I.jsx)(no,{scope:t,forceMount:n,children:T.Children.map(r,e=>(0,I.jsx)(ci,{present:n||a.open,children:(0,I.jsx)(ii,{asChild:!0,container:i,children:e})}))})},`DialogPortal`),ao=`DialogOverlay`,oo=T.forwardRef(Ka(function(e,t){let n=ro(ao,e.__scopeDialog),{forceMount:r=n.forceMount,...i}=e,a=Za(ao,e.__scopeDialog);return a.modal?(0,I.jsx)(ci,{present:r||a.open,children:(0,I.jsx)(co,{...i,ref:t})}):null},`DialogOverlay`)),so=ze(`DialogOverlay.RemoveScroll`),co=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(ao,n),a=Ie(t,Ar());return(0,I.jsx)(Fa,{as:so,allowPinchZoom:!0,shards:T.useMemo(()=>[i.contentRef,...i.branchNodes.map(e=>({current:e}))],[i.contentRef,i.branchNodes]),children:(0,I.jsx)(gr.div,{"data-state":bo(i.open),...r,ref:a,style:{pointerEvents:`auto`,...r.style}})})},`DialogOverlayImpl`)),lo=`DialogContent`,uo=T.forwardRef(Ka(function(e,t){let n=ro(lo,e.__scopeDialog),{forceMount:r=n.forceMount,...i}=e,a=Za(lo,e.__scopeDialog);return(0,I.jsx)(ci,{present:r||a.open,children:a.modal?(0,I.jsx)(fo,{...i,ref:t}):(0,I.jsx)(po,{...i,ref:t})})},`DialogContent`)),fo=T.forwardRef(Ka(function(e,t){let n=Za(lo,e.__scopeDialog),r=T.useRef(null),i=Ie(t,n.contentRef,r);return T.useEffect(()=>{let e=r.current;if(e)return Wa(e)},[]),(0,I.jsx)(mo,{...e,ref:i,trapFocus:n.open,disableOutsidePointerEvents:n.open,onCloseAutoFocus:Rn(e.onCloseAutoFocus,e=>{e.preventDefault(),n.triggerRef.current?.focus()}),onPointerDownOutside:Rn(e.onPointerDownOutside,e=>{let t=e.detail.originalEvent,n=t.button===0&&t.ctrlKey===!0;(t.button===2||n)&&e.preventDefault()}),onFocusOutside:Rn(e.onFocusOutside,e=>e.preventDefault())})},`DialogContentModal`)),po=T.forwardRef(Ka(function(e,t){let n=Za(lo,e.__scopeDialog),r=T.useRef(!1),i=T.useRef(!1);return(0,I.jsx)(mo,{...e,ref:t,trapFocus:!1,disableOutsidePointerEvents:!1,onCloseAutoFocus:t=>{e.onCloseAutoFocus?.(t),t.defaultPrevented||(r.current||n.triggerRef.current?.focus(),t.preventDefault()),r.current=!1,i.current=!1},onInteractOutside:t=>{e.onInteractOutside?.(t),t.defaultPrevented||(r.current=!0,t.detail.originalEvent.type===`pointerdown`&&(i.current=!0));let a=t.target;n.triggerRef.current?.contains(a)&&t.preventDefault(),t.detail.originalEvent.type===`focusin`&&i.current&&t.preventDefault()}})},`DialogContentNonModal`)),mo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,trapFocus:r,onOpenAutoFocus:i,onCloseAutoFocus:a,"aria-describedby":o,children:s,...c}=e,l=Za(lo,n);return yi(),(0,I.jsx)(Ur,{registry:l.branchRegistry,children:(0,I.jsx)(Vr,{asChild:!0,loop:!0,trapped:r,branches:l.branchNodes,onMountAutoFocus:i,onUnmountAutoFocus:a,children:(0,I.jsx)(kr,{role:`dialog`,id:l.contentId,"aria-labelledby":l.titlePresent?l.titleId:void 0,"aria-describedby":l.descriptionPresent?yo(o,l.descriptionId):o,"data-state":bo(l.open),...c,ref:t,deferPointerDownOutside:!0,onDismiss:()=>l.onOpenChange(!1),children:s})})})},`DialogContentImpl`)),ho=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(`DialogTitle`,n),{setTitleCount:a}=i;return Jn(()=>(a(e=>e+1),()=>a(e=>e-1)),[a]),(0,I.jsx)(gr.h2,{id:i.titleId,...r,ref:t})},`DialogTitle`)),go=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(`DialogDescription`,n),{setDescriptionCount:a}=i;return Jn(()=>(a(e=>e+1),()=>a(e=>e-1)),[a]),(0,I.jsx)(gr.p,{id:i.descriptionId,...r,ref:t})},`DialogDescription`)),_o=`DialogClose`,vo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(_o,n);return(0,I.jsx)(gr.button,{type:`button`,...r,ref:t,onClick:Rn(e.onClick,()=>i.onOpenChange(!1))})},`DialogClose`));function yo(...e){let t=new Set;for(let n of e)if(typeof n==`string`)for(let e of String(n).trim().split(/\s+/))e&&t.add(e);return t.size>0?Array.from(t).join(` `):void 0}Ka(yo,`concatAriaDescribedby`);function bo(e){return e?`open`:`closed`}Ka(bo,`getState`);var xo=Qa,So=eo,Co=ho,wo=go;function To({className:e,children:t,...n}){return(0,I.jsxs)(io,{children:[(0,I.jsx)(oo,{className:`dialog-overlay`}),(0,I.jsxs)(uo,{className:An(`dialog-content`,e),...n,children:[t,(0,I.jsx)(vo,{className:`dialog-close`,"aria-label":`Close dialog`,children:(0,I.jsx)(je,{size:18})})]})]})}var Eo=Object.defineProperty,Do=(e,t)=>Eo(e,`name`,{value:t,configurable:!0}),[Oo,ko]=Kn(`AlertDialog`,[Ya]),Ao=Ya(),jo=Do(e=>{let{__scopeAlertDialog:t,...n}=e,r=Ao(t);return(0,I.jsx)(Qa,{...r,...n,modal:!0})},`AlertDialog`);T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(eo,{...i,...r,ref:t})},`AlertDialogTrigger`));var Mo=Do(e=>{let{__scopeAlertDialog:t,...n}=e,r=Ao(t);return(0,I.jsx)(io,{...r,...n})},`AlertDialogPortal`),No=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(oo,{...i,...r,ref:t})},`AlertDialogOverlay`)),[Po,Fo]=Oo(`AlertDialogContent`),Io=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,children:r,...i}=e,a=Ao(n),o=Ie(t,T.useRef(null)),s=T.useRef(null);return(0,I.jsx)(Po,{scope:n,cancelRef:s,children:(0,I.jsx)(uo,{role:`alertdialog`,...a,...i,ref:o,onOpenAutoFocus:Rn(i.onOpenAutoFocus,e=>{e.preventDefault(),s.current?.focus({preventScroll:!0})}),onPointerDownOutside:e=>e.preventDefault(),onInteractOutside:e=>e.preventDefault(),children:r})})},`AlertDialogContent`)),Lo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(ho,{...i,...r,ref:t})},`AlertDialogTitle`)),Ro=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(go,{...i,...r,ref:t})},`AlertDialogDescription`)),zo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(vo,{...i,...r,ref:t})},`AlertDialogAction`)),Bo=`AlertDialogCancel`,Vo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,{cancelRef:i}=Fo(Bo,n),a=Ao(n),o=Ie(t,i);return(0,I.jsx)(vo,{...a,...r,ref:o})},`AlertDialogCancel`)),Ho=jo,Uo=Lo,Wo=Ro,z=zo,B=Vo;function Go({children:e,...t}){return(0,I.jsxs)(Mo,{children:[(0,I.jsx)(No,{className:`dialog-overlay`}),(0,I.jsx)(Io,{className:`dialog-content`,...t,children:e})]})}var Ko=`<!-- ======================= CALL ======================= -->
-<section
-  id="tab-call"
-  class="grid call-grid"
-  aria-label="Voice banking workspace"
->
-  <div class="card conversation-card">
-    <div class="row between panel-heading">
-      <div class="row">
-        <span class="panel-icon">N</span>
-        <div>
-          <h2>Your banking conversation</h2>
-          <div class="muted">Nishabdha AI &middot; Voice & text</div>
-        </div>
-      </div>
-      <span id="callState" class="pill grey">Not connected</span>
-    </div>
-    <div
-      id="chat"
-      class="chat"
-      role="log"
-      aria-live="polite"
-      aria-label="Banking conversation"
-    >
-      <div class="conversation-empty empty">
-        <div class="sound-glyph" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i>
-        </div>
-        <h3>A familiar voice.<br />A safer conversation.</h3>
-        <p>
-          Ask about your account or request a banking action.<br />You stay in
-          control of every transfer.
-        </p>
-        <div class="suggestion-row">
-          <span>&ldquo;What's my balance?&rdquo;</span
-          ><span>&ldquo;Block my debit card&rdquo;</span>
-        </div>
-      </div>
-    </div>
-    <form id="typeForm" class="row composer" autocomplete="off">
-      <input
-        id="typeText"
-        aria-label="Message to bank agent"
-        placeholder="Type a message to your bank agent..."
-      /><button id="typeBtn" aria-label="Send message">
-        Send &#8599;
-      </button>
-    </form>
-    <div class="conversation-footnote">
-      <span class="small-dot"></span> Send a message to start. Transfers always
-      require your passkey approval.
-    </div>
-  </div>
-  <div class="session-column">
-    <div class="card voice-card">
-      <div class="row between">
-        <span class="lbl">VOICE SESSION</span
-        ><span class="session-tag">BROWSER AUDIO</span>
-      </div>
-      <div class="voice-orbit" aria-hidden="true">
-        <div class="orbit-ring"></div>
-        <div class="orbit-ring inner"></div>
-        <div class="voice-core">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </div>
-      </div>
-      <h2>Let's talk securely.</h2>
-      <p class="muted">
-        Your voice starts the conversation.<br />Your passkey approves the
-        action.
-      </p>
-      <label class="voice-language" for="lang"
-        >Conversation language<select id="lang">
-          <option value="en">English</option>
-          <option value="hi">हिन्दी</option>
-          <option value="kn">ಕನ್ನಡ</option>
-        </select></label
-      >
-      <div class="row call-actions">
-        <button id="startBtn">Start a secure call &#8599;</button
-        ><button id="endBtn" class="danger" disabled>End call</button>
-      </div>
-      <div class="micwrap">
-        <button id="micBtn" class="mic" disabled aria-pressed="false">
-          Mic off
-        </button>
-        <div class="meter" aria-hidden="true"><b id="meter"></b></div>
-        <div id="micHint" class="muted">
-          Microphone pauses while the agent speaks. Tap to interrupt.
-        </div>
-        <button id="doneBtn" class="ghost" disabled>
-          Finish this utterance
-        </button>
-      </div>
-    </div>
-    <details class="card audio-upload">
-      <summary>Test with a recorded clip <span>+</span></summary>
-      <p class="muted">
-        Use consented genuine or synthetic audio. The clip is submitted as a new
-        caller utterance.
-      </p>
-      <label for="clipFile" class="lbl">Audio file</label
-      ><input id="clipFile" type="file" accept="audio/*" /><button
-        id="clipBtn"
-        class="ghost"
-        disabled
-      >
-        Send audio clip
-      </button>
-    </details>
-  </div>
-</section>
-
-<!-- ======================= PHONE APP ======================= -->
-<section
-  id="tab-phone"
-  class="grid customer-grid"
-  hidden
-  aria-label="Customer approval app"
->
-  <div class="card customer-account">
-    <div class="row between">
-      <div>
-        <div class="lbl">YOUR TRUSTED BANK APP</div>
-        <h2 id="pName">Loading customer...</h2>
-      </div>
-      <span id="pConn" class="pill grey">offline</span>
-    </div>
-    <div id="pBalance" class="account-balance">
-      <div class="empty">Open the customer app to load balances.</div>
-    </div>
-    <div class="row between">
-      <h2>Approvals & activity</h2>
-      <span class="pill grey">Exact action only</span>
-    </div>
-    <div id="pNotifs" class="list">
-      <div class="empty approval-empty">
-        You're in control.<br />New requests and security alerts will appear
-        here.
-      </div>
-    </div>
-  </div>
-  <div class="customer-tools">
-    <div class="card">
-      <div class="lbl">BANK & AGENT IDENTITY</div>
-      <h2>Trust goes both ways.</h2>
-      <p class="muted">
-        Verify the signed bank session or give an assistant a single, limited
-        permission.
-      </p>
-      <button id="pCheckBank" class="ghost">Verify bank session &#8599;</button
-      ><button id="provisionPasskey" class="ghost">
-        Set up passkey with bank staff
-      </button>
-      <div class="divider"></div>
-      <div class="row between">
-        <h3>Support assistant</h3>
-        <span class="pill grey">1 ticket &middot; 10 min</span>
-      </div>
-      <button id="delegateDemo" class="ghost">
-        Authorize an AI support assistant</button
-      ><button id="runDelegate" hidden>Run authorized AI ticket demo</button
-      ><button id="revokeDelegate" class="danger" hidden>
-        Revoke assistant permission
-      </button>
-      <div
-        id="securityStatus"
-        class="security-status muted"
-        role="status"
-      ></div>
-    </div>
-    <div class="card">
-      <div class="row between">
-        <h2>Voice enrollment</h2>
-        <span class="pill grey">With your consent</span>
-      </div>
-      <p class="muted">
-        Read each phrase for 3-4 seconds. These samples help compare your voice
-        during later calls.
-      </p>
-      <ol id="phrases" class="phrases"></ol>
-      <div class="row">
-        <button id="recBtn">Record sentence 1</button
-        ><button id="enrollBtn" class="ghost" disabled>Save my voice</button
-        ><button id="recReset" class="ghost">Start over</button>
-      </div>
-      <div id="enrollMsg" class="muted" role="status"></div>
-    </div>
-    <div class="card">
-      <h2>Your cards</h2>
-      <div id="pCards" class="list"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= FRAUD DESK ======================= -->
-<section
-  id="tab-desk"
-  class="grid3"
-  hidden
-  aria-label="Fraud investigation desk"
->
-  <div class="card">
-    <div class="row between">
-      <h2>Session inbox</h2>
-      <span id="dConn" class="pill grey">offline</span>
-    </div>
-    <div id="dCalls" class="list">
-      <div class="empty">Live and recent calls appear here.</div>
-    </div>
-    <div class="row between">
-      <h2>Review queue</h2>
-      <button id="dRefresh" class="ghost">Refresh</button>
-    </div>
-    <div id="dTickets" class="list"><div class="empty">No tickets.</div></div>
-    <div class="row">
-      <button id="dAudit" class="ghost">Verify audit log</button
-      ><button id="dReset" class="danger">Reset demo bank</button>
-    </div>
-    <details class="outbound-control">
-      <summary>Open an outbound bank session</summary>
-      <p class="muted">
-        Staff authorization required. Create a browser demo session for the
-        selected customer, then verify its signed proof in the customer app.
-      </p>
-      <label class="lbl" for="outboundReason">Call reason</label>
-      <input
-        id="outboundReason"
-        maxlength="200"
-        value="Account security check"
-      />
-      <button id="dOutbound" class="ghost">Start outbound demo call</button>
-    </details>
-  </div>
-  <div class="card">
-    <div class="row between">
-      <div>
-        <div class="lbl">Selected call</div>
-        <h2 id="sTitle">None</h2>
-      </div>
-      <span id="sRisk" class="pill grey">unknown</span>
-    </div>
-    <div class="row between">
-      <div>
-        <div class="big" id="sTrust">–</div>
-        <div class="lbl">risk indicator</div>
-      </div>
-      <dl class="kv">
-        <dt>Speaker match</dt>
-        <dd id="sSpk">–</dd>
-        <dt>Synthetic signal (recent)</dt>
-        <dd id="sSyn">–</dd>
-        <dt>Pressure</dt>
-        <dd id="sPress">–</dd>
-      </dl>
-    </div>
-    <div>
-      <div class="lbl">
-        Voice checks · bar height = speaker match · red = synthetic or swap
-      </div>
-      <div id="sWave" class="wave"></div>
-    </div>
-    <div class="lbl">Decision timeline</div>
-    <div id="sLog" class="log"><div>Pick a call on the left.</div></div>
-    <div class="row">
-      <button id="sReport" class="ghost" disabled>Evidence report</button>
-      <button id="sKill" class="danger" disabled>End this call</button>
-    </div>
-    <div id="sReportBox" hidden class="item"></div>
-  </div>
-</section>
-
-<!-- ======================= KNOWLEDGE BASE & RAG ======================= -->
-<section id="tab-knowledge" class="grid" hidden>
-  <!-- Left column: Grounded RAG Assistant -->
-  <div class="card">
-    <div class="row between">
-      <h2>Reviewed policy library</h2>
-      <span id="ragStatus" class="pill">Ready</span>
-    </div>
-    <div class="muted">
-      Find an explanation in the reviewed demo policies. Answers include the
-      accepted source excerpt; the assistant abstains when a source is missing.
-    </div>
-
-    <div>
-      <div class="lbl" style="margin-bottom: 6px">
-        Explore a reviewed policy
-      </div>
-      <div class="row" id="quickQueries">
-        <button
-          type="button"
-          class="ghost"
-          data-q="How do I approve a transfer with a passkey?"
-        >
-          Passkey approval
-        </button>
-        <button
-          type="button"
-          class="ghost"
-          data-q="How do I verify the bank agent session?"
-        >
-          Verify a bank agent
-        </button>
-        <button
-          type="button"
-          class="ghost"
-          data-q="What can the support assistant delegate do?"
-        >
-          Delegate permissions
-        </button>
-      </div>
-    </div>
-
-    <form id="ragForm" class="row" autocomplete="off" style="margin-top: 4px">
-      <input
-        id="ragInput"
-        placeholder="Type a banking or scam query..."
-        style="flex: 1"
-        required
-      />
-      <button id="ragSubmit">Ask RAG</button>
-    </form>
-
-    <div
-      id="ragResults"
-      hidden
-      style="display: grid; gap: 12px; margin-top: 6px"
-    >
-      <div id="ragSpokenBox" class="notif bank">
-        <div class="lbl" style="color: var(--accent)">Accepted answer</div>
-        <div id="ragSpoken" style="font-weight: 600; font-size: 0.95rem"></div>
-      </div>
-
-      <div>
-        <div class="row between">
-          <div class="lbl">Source-backed excerpts</div>
-          <span id="ragVerifBadge" class="pill"></span>
-        </div>
-        <div
-          id="ragSentences"
-          style="display: grid; gap: 6px; margin-top: 6px"
-        ></div>
-      </div>
-
-      <details id="ragEvidenceDetails">
-        <summary class="lbl">
-          Retrieved Evidence & Sources (<span id="ragEvCount">0</span> items)
-        </summary>
-        <div
-          id="ragEvidenceList"
-          class="list"
-          style="margin-top: 8px; max-height: 260px; overflow-y: auto"
-        ></div>
-      </details>
-    </div>
-  </div>
-
-  <!-- Right column: Research, Web Scraping & Knowledge Explorer -->
-  <div class="card">
-    <div class="row between">
-      <h2>Source review workspace</h2>
-      <span id="kbStatsPill" class="pill grey">Loading KB...</span>
-    </div>
-
-    <!-- Tool 1: Autonomous Research -->
-    <div class="item">
-      <div class="lbl">01 / Research a topic</div>
-      <div class="muted">
-        Staff access required. Searches approved hosts and quarantines fetched
-        material for review. Live calls cannot launch research.
-      </div>
-      <form
-        id="researchForm"
-        class="row"
-        autocomplete="off"
-        style="margin-top: 4px"
-      >
-        <input
-          id="researchInput"
-          placeholder="e.g. RBI cyber security guidelines 2026"
-          style="flex: 1"
-          required
-        />
-        <button id="researchBtn" class="ghost">Run Research</button>
-      </form>
-      <div
-        id="researchProgress"
-        hidden
-        class="log"
-        style="
-          margin-top: 8px;
-          max-height: 160px;
-          background: #f9fcfb;
-          padding: 8px;
-          border-radius: 8px;
-        "
-      ></div>
-    </div>
-
-    <!-- Tool 2: Direct Web Scraper -->
-    <div class="item">
-      <div class="lbl">02 / Submit an approved source</div>
-      <div class="muted">
-        Only allowlisted public HTTPS destinations are accepted. Inspect the
-        exact text and approve its hash before publishing.
-      </div>
-      <form
-        id="scrapeForm"
-        class="row"
-        autocomplete="off"
-        style="margin-top: 4px"
-      >
-        <input
-          id="scrapeInput"
-          type="url"
-          placeholder="https://example.com/advisory.html"
-          style="flex: 1"
-          required
-        />
-        <button id="scrapeBtn" class="ghost">Scrape URL</button>
-      </form>
-      <div
-        id="scrapeResult"
-        hidden
-        class="muted"
-        style="margin-top: 4px; font-size: 0.82rem"
-      ></div>
-    </div>
-
-    <!-- Tool 3: Knowledge Base Ledger -->
-    <div>
-      <div class="row between" style="margin-bottom: 6px">
-        <div class="lbl">Knowledge Base Claims Ledger</div>
-        <button
-          id="refreshKbBtn"
-          class="ghost"
-          style="padding: 3px 8px; font-size: 0.75rem"
-        >
-          Refresh
-        </button>
-      </div>
-      <div
-        id="kbClaimsList"
-        class="list"
-        style="max-height: 240px; overflow-y: auto"
-      >
-        <div class="empty">Loading claims...</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-`,qo=`modulepreload`,Jo=function(e){return`/static/ui/`+e},Yo={},Xo=function(e){return e.pathname.endsWith(`.css`)},Zo=function(e,t,n){if(t in e)return e[t];let r=n();if(!r){e[t]=void 0;return}let i=r.then(()=>{e[t]=void 0},n=>{throw e[t]=void 0,n});return e[t]=i,i},Qo=function(e,t,n){let r=Promise.resolve();if(t&&t.length>0){let e,i=document.querySelector(`meta[property=csp-nonce]`),a=i?.nonce||i?.getAttribute(`nonce`);function o(e){return Promise.all(e.map(e=>Promise.resolve(e).then(e=>({status:`fulfilled`,value:e}),e=>({status:`rejected`,reason:e}))))}function s(e){return import.meta.resolve?new URL(import.meta.resolve(e)):new URL(e,import.meta.url)}r=o(t.map(t=>{t=Jo(t,n);let r=s(t),i=Xo(r);return Zo(Yo,r.href,()=>{if(e===void 0){e={all:new Set,styles:new Set};let t=document.getElementsByTagName(`link`);for(let n=t.length-1;n>=0;n--){let r=t[n];e.all.add(r.href),r.rel===`stylesheet`&&e.styles.add(r.href)}}if((i?e.styles:e.all).has(r.href))return;let t=document.createElement(`link`);if(t.rel=i?`stylesheet`:qo,i||(t.as=`script`),t.crossOrigin=``,t.href=r.href,a&&t.setAttribute(`nonce`,a),document.head.appendChild(t),i)return new Promise((e,n)=>{t.addEventListener(`load`,e),t.addEventListener(`error`,()=>n(Error(`Unable to preload CSS for ${r}`)))})})}).filter(e=>e!==void 0))}function i(e){let t=new Event(`vite:preloadError`,{cancelable:!0});if(t.payload=e,window.dispatchEvent(t),!t.defaultPrevented)throw e}return r.then(t=>{for(let e of t||[])e.status===`rejected`&&i(e.reason);return e().catch(i)})},V=(0,T.lazy)(()=>Qo(()=>import(`./PolicyAssistant-CImy1hwU.js`),[])),$o={call:{label:`Voice workspace`,icon:D,eyebrow:`VOICE BANKING, WITH ASSURANCE`,title:`Every voice. Verified.`,description:`A conversation that feels natural. Controls that keep you in charge.`},phone:{label:`Customer app`,icon:A,eyebrow:`YOUR ACCOUNT. YOUR PERMISSION.`,title:`You make the final call.`,description:`Review the exact action, verify your bank, and approve with a passkey.`},desk:{label:`Fraud desk`,icon:Ee,eyebrow:`EVIDENCE BEFORE ACTION`,title:`See the signal. Understand the decision.`,description:`Follow live sessions, inspect voice evidence, and resolve flagged activity.`},knowledge:{label:`Knowledge library`,icon:ue,eyebrow:`REVIEWED SOURCES, CLEAR ANSWERS`,title:`Good answers start with evidence.`,description:`Explore approved policies and review new sources before they reach a caller.`}},es=(0,T.memo)(function(){let e=(0,T.useRef)(null),[t,n]=(0,T.useState)(``);return(0,T.useEffect)(()=>{let e=!1,t=e=>new Promise((t,n)=>{let r=document.createElement(`script`);r.src=e,r.onload=()=>t(),r.onerror=()=>n(Error(`Unable to load `+e)),document.body.append(r)});return(async()=>{try{await t(`/static/workspace.js`),await t(`/static/security.js`),e||document.dispatchEvent(new Event(`nishabdha:ready`))}catch{e||n(`The workspace could not load. Refresh the page to retry.`)}})(),()=>{e=!0}},[]),(0,I.jsxs)(I.Fragment,{children:[t&&(0,I.jsx)(`div`,{className:`inline-error`,role:`alert`,children:t}),(0,I.jsx)(`div`,{ref:e,dangerouslySetInnerHTML:{__html:Ko}})]})});function ts(){let[e,t]=(0,T.useState)(`call`),[n,r]=(0,T.useState)(!1),[i,a]=(0,T.useState)(()=>matchMedia(`(max-width:760px)`).matches),o=(0,T.useRef)(null),[s,c]=(0,T.useState)(!1),[l,u]=(0,T.useState)(!1),[d,f]=(0,T.useState)(`loading`),[p,m]=(0,T.useState)(`Checking providers`),[h,g]=(0,T.useState)(null),_=(0,T.useRef)(null);(0,T.useEffect)(()=>{let e=matchMedia(`(max-width:760px)`),t=()=>{a(e.matches),e.matches||r(!1)};return e.addEventListener(`change`,t),()=>e.removeEventListener(`change`,t)},[]),(0,T.useEffect)(()=>{if(!i||!n)return;let e=document.activeElement,t=document.body.style.overflow;document.body.style.overflow=`hidden`;let a=()=>Array.from(o.current?.querySelectorAll(`a[href],button:not([disabled]),summary,input:not([disabled]),select:not([disabled])`)||[]).filter(e=>e.offsetParent!==null);a()[0]?.focus();let s=e=>{if(e.key===`Escape`&&(e.preventDefault(),r(!1)),e.key===`Tab`){let t=a(),n=t[0],r=t.at(-1);e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}};return document.addEventListener(`keydown`,s),()=>{document.removeEventListener(`keydown`,s),document.body.style.overflow=t,e?.focus()}},[i,n]),(0,T.useEffect)(()=>{let e=e=>{let n=e.detail;n in $o&&t(n)},n=()=>u(!0);document.addEventListener(`nishabdha:tab`,e),document.addEventListener(`nishabdha:ready`,n),window.confirmTransaction=e=>new Promise(t=>{_.current=t,g(e)});let r=!0,i=()=>fetch(`/api/health`).then(e=>{if(!e.ok)throw Error();return e.json()}).then(e=>{if(!r)return;f(`online`);let t=e.voice?.chain||[];m(t.length?t.join(` + `):`Voice provider unavailable`)}).catch(()=>{r&&(f(`offline`),m(`Backend unavailable`))});i();let a=setInterval(i,3e4);return()=>{r=!1,clearInterval(a),document.removeEventListener(`nishabdha:tab`,e),document.removeEventListener(`nishabdha:ready`,n),_.current?.(!1),delete window.confirmTransaction}},[]);let v=e=>{t(e),r(!1),document.dispatchEvent(new CustomEvent(`nishabdha:navigate`,{detail:e}))},y=e=>{_.current?.(e),_.current=null,g(null)},b=$o[e];return(0,I.jsxs)(`div`,{className:`app-shell`,children:[(0,I.jsx)(`a`,{className:`skip-link`,href:`#workspace`,children:`Skip to workspace`}),n&&(0,I.jsx)(`button`,{className:`mobile-scrim`,"aria-label":`Close navigation`,tabIndex:-1,onClick:()=>r(!1)}),(0,I.jsxs)(`aside`,{ref:o,className:`sidebar `+(n?`sidebar-open`:``),inert:i&&!n,"aria-hidden":i&&!n,role:i&&n?`dialog`:void 0,"aria-modal":i&&n?!0:void 0,"aria-label":`Workspace navigation`,children:[(0,I.jsxs)(`a`,{className:`brand-lockup`,href:`/`,"aria-label":`Nishabdha home`,children:[(0,I.jsx)(`img`,{src:`/static/mark.svg`,alt:``}),(0,I.jsxs)(`div`,{children:[`Nishabdha`,(0,I.jsx)(`span`,{children:`THE VOICE TRUST LAYER`})]})]}),(0,I.jsx)(`div`,{className:`nav-section-label`,children:`WORKSPACE`}),(0,I.jsx)(`nav`,{className:`tabs`,"aria-label":`Main navigation`,children:Object.keys($o).map((t,n)=>{let r=$o[t].icon;return(0,I.jsxs)(`button`,{"data-tab":t,"aria-current":e===t?`page`:void 0,disabled:!l,onClick:()=>v(t),children:[(0,I.jsx)(r,{size:19}),(0,I.jsx)(`span`,{children:$o[t].label}),(0,I.jsxs)(`span`,{className:`nav-index`,"aria-hidden":`true`,children:[`0`,n+1]})]},t)})}),(0,I.jsxs)(`div`,{className:`sidebar-note`,children:[(0,I.jsx)(`div`,{className:`note-icon`,children:(0,I.jsx)(Se,{size:19})}),(0,I.jsx)(`h3`,{children:`Trust, in both directions.`}),(0,I.jsxs)(`p`,{children:[`Verify the caller.`,(0,I.jsx)(`br`,{}),`Prove the agent.`,(0,I.jsx)(`br`,{}),`Approve the exact action.`]}),(0,I.jsxs)(Pn,{variant:`ghost`,onClick:()=>c(!0),children:[(0,I.jsx)(we,{size:15}),` Ask a policy question`,` `,(0,I.jsx)(se,{size:14})]})]}),(0,I.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,I.jsxs)(`details`,{className:`staff-access`,children:[(0,I.jsxs)(`summary`,{children:[(0,I.jsx)(ve,{size:15}),` Staff access `,(0,I.jsx)(fe,{size:14})]}),(0,I.jsx)(`label`,{htmlFor:`staffKey`,children:`Staff API key`}),(0,I.jsx)(`input`,{id:`staffKey`,type:`password`,autoComplete:`off`,placeholder:`Enter staff key`}),(0,I.jsx)(`p`,{children:`Kept in this browser session. Required for fraud-desk and research controls.`})]}),(0,I.jsxs)(`div`,{className:`sidebar-foot`,children:[(0,I.jsx)(`span`,{className:`demo-dot`}),` SIMULATED BANKING `,(0,I.jsx)(`span`,{children:`v1.0`})]})]})]}),(0,I.jsxs)(`div`,{className:`main-shell`,inert:i&&n,children:[(0,I.jsxs)(`header`,{className:`app-topbar`,children:[(0,I.jsxs)(`div`,{className:`breadcrumb`,children:[(0,I.jsx)(`button`,{className:`mobile-menu`,"aria-label":`Open navigation`,onClick:()=>r(!0),children:(0,I.jsx)(k,{size:20})}),(0,I.jsx)(be,{size:17}),(0,I.jsx)(`span`,{children:`Workspace`}),(0,I.jsx)(fe,{size:14}),(0,I.jsx)(`strong`,{children:b.label})]}),(0,I.jsxs)(`div`,{className:`topbar-actions`,children:[(0,I.jsxs)(`span`,{className:`backend-state `+d,children:[(0,I.jsx)(`span`,{}),` `,d===`loading`?`Connecting`:d===`online`?`Backend connected`:`Connection unavailable`]}),(0,I.jsxs)(xo,{children:[(0,I.jsx)(So,{asChild:!0,children:(0,I.jsx)(Pn,{variant:`ghost`,size:`icon`,"aria-label":`About Nishabdha`,children:(0,I.jsx)(me,{size:19})})}),(0,I.jsxs)(To,{children:[(0,I.jsx)(`div`,{className:`dialog-symbol`,children:(0,I.jsx)(Ee,{})}),(0,I.jsx)(Co,{children:`Trust before every action.`}),(0,I.jsx)(wo,{children:`Nishabdha brings caller evidence, exact transaction approval, and signed agent identity into one banking workflow.`}),(0,I.jsxs)(`div`,{className:`about-steps`,children:[(0,I.jsxs)(`p`,{children:[(0,I.jsx)(D,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Check the current voice request`}),`Speaker and authenticity evidence belongs to this utterance.`]})]}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(ge,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Approve the exact transaction`}),`A passkey binds your confirmation to the frozen recipient and amount.`]})]}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(Ee,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Verify the bank session`}),`A signed record identifies the application session. Telephone audio alone does not establish this proof.`]})]})]}),(0,I.jsx)(`p`,{className:`muted`,children:`Banking actions are simulated. Live DetectifAI verification requires configured vendor credentials.`})]})]}),(0,I.jsx)(`span`,{className:`avatar`,children:`N`})]})]}),(0,I.jsx)(`div`,{id:`voiceModeBanner`,className:`mock-mode-banner`,role:`status`,hidden:!0}),(0,I.jsxs)(`main`,{id:`workspace`,children:[(0,I.jsxs)(`div`,{className:`page-heading`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsxs)(`div`,{className:`eyebrow`,children:[(0,I.jsx)(`span`,{}),b.eyebrow]}),(0,I.jsx)(`h1`,{children:b.title}),(0,I.jsx)(`p`,{children:b.description})]}),(0,I.jsxs)(`div`,{className:`customer-selector`,children:[(0,I.jsx)(`label`,{htmlFor:`customer`,children:`DEMO CUSTOMER`}),(0,I.jsx)(`select`,{id:`customer`,"aria-label":`Demo customer`,defaultValue:``})]})]}),(0,I.jsxs)(`div`,{className:`assurance-strip`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`01`}),(0,I.jsx)(D,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Caller evidence`}),(0,I.jsx)(`span`,{children:`Current utterance checks`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`VOICE`})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`02`}),(0,I.jsx)(ge,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Customer consent`}),(0,I.jsx)(`span`,{children:`Exact action · Passkey approval`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`APP`})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`03`}),(0,I.jsx)(Ee,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Controlled execution`}),(0,I.jsx)(`span`,{children:`One action · One signed receipt`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`GATEWAY`})]})]}),(0,I.jsx)(es,{}),(0,I.jsxs)(`footer`,{className:`workspace-footer`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`small-dot`}),` Nishabdha`,` `,(0,I.jsx)(`span`,{className:`footer-separator`,children:`/`}),` Built for Unclone Agents`]}),(0,I.jsxs)(`span`,{children:[`Voice provider: `,p]})]})]})]}),(0,I.jsxs)(Pn,{className:`assistant-launch`,onClick:()=>c(!0),"aria-label":`Open policy assistant`,children:[(0,I.jsx)(ke,{size:17}),(0,I.jsx)(`span`,{children:`Policy assistant`}),(0,I.jsx)(se,{size:15})]}),(0,I.jsx)(xo,{open:s,onOpenChange:c,children:(0,I.jsxs)(To,{className:`assistant-dialog`,children:[(0,I.jsxs)(`div`,{className:`assistant-heading`,children:[(0,I.jsx)(`span`,{className:`panel-icon`,children:(0,I.jsx)(ue,{size:19})}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(Co,{children:`Policy assistant`}),(0,I.jsx)(wo,{children:`Answers from reviewed Nishabdha policies`})]})]}),(0,I.jsx)(T.Suspense,{fallback:(0,I.jsx)(`div`,{className:`empty`,children:`Loading policy assistantâ€¦`}),children:(0,I.jsx)(V,{})})]})}),(0,I.jsx)(Ho,{open:!!h,onOpenChange:e=>{e||y(!1)},children:(0,I.jsxs)(Go,{children:[(0,I.jsx)(`div`,{className:`dialog-symbol`,children:(0,I.jsx)(ge,{})}),(0,I.jsx)(Uo,{children:`Review this transfer`}),(0,I.jsx)(Wo,{children:`Confirm these exact details before your passkey opens. If anything is wrong, cancel and start a new request.`}),h&&(0,I.jsxs)(`dl`,{className:`transaction-summary`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`Amount`}),(0,I.jsx)(`dd`,{className:`transaction-amount`,children:new Intl.NumberFormat(`en-IN`,{style:`currency`,currency:h.currency||`INR`}).format(h.amount_paise/100)})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`To`}),(0,I.jsxs)(`dd`,{children:[h.payee_name,(0,I.jsxs)(`small`,{children:[`Account ending `,h.destination_last4]})]})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`From`}),(0,I.jsxs)(`dd`,{children:[`Account ending `,h.source_last4]})]})]}),(0,I.jsxs)(`div`,{className:`dialog-actions`,children:[(0,I.jsx)(B,{asChild:!0,children:(0,I.jsx)(Pn,{variant:`outline`,onClick:()=>y(!1),children:`Cancel transfer`})}),(0,I.jsx)(z,{asChild:!0,children:(0,I.jsxs)(Pn,{onClick:()=>y(!0),children:[(0,I.jsx)(ge,{size:17}),` Continue with passkey`]})})]})]})})]})}(0,_.createRoot)(document.getElementById(`root`)).render((0,I.jsx)(ts,{}));export{s as _,Si as a,ki as c,Mn as d,Ee as f,o as g,p as h,Ti as i,Di as l,E as m,Mi as n,Ei as o,ue as p,Ai as r,Oi as s,ji as t,Pn as u,l as v};
+`},Aa=0,ja=[];function Ma(e){var t=T.useRef([]),n=T.useRef([0,0]),r=T.useRef(),i=T.useState(Aa++)[0],a=T.useState(na)[0],o=T.useRef(e);T.useEffect(function(){o.current=e},[e]),T.useEffect(function(){if(e.inert){document.body.classList.add(`block-interactivity-${i}`);var t=ki([e.lockRef.current],(e.shards||[]).map(Da),!0).filter(Boolean);return t.forEach(function(e){return e.classList.add(`allow-interactivity-${i}`)}),function(){document.body.classList.remove(`block-interactivity-${i}`),t.forEach(function(e){return e.classList.remove(`allow-interactivity-${i}`)})}}},[e.inert,e.lockRef.current,e.shards]);var s=T.useCallback(function(e,t){if(`touches`in e&&e.touches.length===2||e.type===`wheel`&&e.ctrlKey)return!o.current.allowPinchZoom;var i=Ta(e),a=n.current,s=`deltaX`in e?e.deltaX:a[0]-i[0],c=`deltaY`in e?e.deltaY:a[1]-i[1],l,u=e.target,d=Math.abs(s)>Math.abs(c)?`h`:`v`;if(`touches`in e&&d===`h`&&u.type===`range`)return!1;var f=window.getSelection(),p=f&&f.anchorNode;if(p&&(p===u||p.contains(u)))return!1;var m=va(d,u);if(!m)return!0;if(m?l=d:(l=d===`v`?`h`:`v`,m=va(d,u)),!m)return!1;if(!r.current&&`changedTouches`in e&&(s||c)&&(r.current=l),!l)return!0;var h=r.current||l;return wa(h,t,e,h===`h`?s:c,!0)},[]),c=T.useCallback(function(e){var n=e;if(ja.length&&ja[ja.length-1]===a){var r=`deltaY`in n?Ea(n):Ta(n),i=t.current.filter(function(e){return e.name===n.type&&(e.target===n.target||n.target===e.shadowParent)&&Oa(e.delta,r)})[0];if(i&&i.should)n.cancelable&&n.preventDefault();else if(!i){var c=(o.current.shards||[]).map(Da).filter(Boolean).filter(function(e){return e.contains(n.target)});(c.length>0?s(n,c[0]):!o.current.noIsolation)&&n.cancelable&&n.preventDefault()}}},[]),l=T.useCallback(function(e,n,r,i){var a={name:e,delta:n,target:r,should:i,shadowParent:Na(r)};t.current.push(a),setTimeout(function(){t.current=t.current.filter(function(e){return e!==a})},1)},[]),u=T.useCallback(function(e){n.current=Ta(e),r.current=void 0},[]),d=T.useCallback(function(t){l(t.type,Ea(t),t.target,s(t,e.lockRef.current))},[]),f=T.useCallback(function(t){l(t.type,Ta(t),t.target,s(t,e.lockRef.current))},[]);T.useEffect(function(){return ja.push(a),e.setCallbacks({onScrollCapture:d,onWheelCapture:d,onTouchMoveCapture:f}),document.addEventListener(`wheel`,c,pa),document.addEventListener(`touchmove`,c,pa),document.addEventListener(`touchstart`,u,pa),function(){ja=ja.filter(function(e){return e!==a}),document.removeEventListener(`wheel`,c,pa),document.removeEventListener(`touchmove`,c,pa),document.removeEventListener(`touchstart`,u,pa)}},[]);var p=e.removeScrollBar,m=e.inert;return T.createElement(T.Fragment,null,m?T.createElement(a,{styles:ka(i)}):null,p?T.createElement(ua,{noRelative:e.noRelative,gapMode:e.gapMode}):null)}function Na(e){for(var t=null;e!==null;)e instanceof ShadowRoot&&(t=e.host,e=e.host),e=e.parentNode;return t}var Pa=Ki(qi,Ma),Fa=T.forwardRef(function(e,t){return T.createElement(Yi,Ci({},e,{ref:t,sideCar:Pa}))});Fa.classNames=Yi.classNames;var Ia=function(e){return typeof document>`u`?null:(Array.isArray(e)?e[0]:e).ownerDocument.body},La=new WeakMap,Ra=new WeakMap,za={},Ba=0,Va=function(e){return e&&(e.host||Va(e.parentNode))},Ha=function(e,t){return t.map(function(t){if(e.contains(t))return t;var n=Va(t);return n&&e.contains(n)?n:(console.error(`aria-hidden`,t,`in not contained inside`,e,`. Doing nothing`),null)}).filter(function(e){return!!e})},Ua=function(e,t,n,r){var i=Ha(t,Array.isArray(e)?e:[e]);za[n]||(za[n]=new WeakMap);var a=za[n],o=[],s=new Set,c=new Set(i),l=function(e){e&&!s.has(e)&&(s.add(e),l(e.parentNode))};i.forEach(l);var u=function(e){e&&!c.has(e)&&Array.prototype.forEach.call(e.children,function(e){if(s.has(e))u(e);else try{var t=e.getAttribute(r),i=t!==null&&t!==`false`,c=(La.get(e)||0)+1,l=(a.get(e)||0)+1;La.set(e,c),a.set(e,l),o.push(e),c===1&&i&&Ra.set(e,!0),l===1&&e.setAttribute(n,`true`),i||e.setAttribute(r,`true`)}catch(t){console.error(`aria-hidden: cannot operate on `,e,t)}})};return u(t),s.clear(),Ba++,function(){o.forEach(function(e){var t=La.get(e)-1,i=a.get(e)-1;La.set(e,t),a.set(e,i),t||(Ra.has(e)||e.removeAttribute(r),Ra.delete(e)),i||e.removeAttribute(n)}),Ba--,Ba||(La=new WeakMap,La=new WeakMap,Ra=new WeakMap,za={})}},Wa=function(e,t,n){n===void 0&&(n=`data-aria-hidden`);var r=Array.from(Array.isArray(e)?e:[e]),i=t||Ia(e);return i?(r.push.apply(r,Array.from(i.querySelectorAll(`[aria-live], script`))),Ua(r,i,n,`aria-hidden`)):function(){return null}},Ga=Object.defineProperty,Ka=(e,t)=>Ga(e,`name`,{value:t,configurable:!0}),qa=`Dialog`,[Ja,Ya]=Kn(qa),[Xa,Za]=Ja(qa),Qa=Ka(e=>{let{__scopeDialog:t,children:n,open:r,defaultOpen:i,onOpenChange:a,modal:o=!0}=e,s=T.useRef(null),c=T.useRef(null),{nodes:l,registry:u}=Wr(),[d,f]=cr({prop:r,defaultProp:i??!1,onChange:a,caller:qa}),[p,m]=T.useState(0),[h,g]=T.useState(0);return(0,I.jsx)(Xa,{scope:t,triggerRef:s,contentRef:c,contentId:$n(),titleId:$n(),descriptionId:$n(),titlePresent:p>0,descriptionPresent:h>0,setTitleCount:m,setDescriptionCount:g,open:d,onOpenChange:f,onOpenToggle:T.useCallback(()=>f(e=>!e),[f]),modal:o,branchNodes:l,branchRegistry:u,children:n})},`Dialog`),$a=`DialogTrigger`,eo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za($a,n),a=Ie(t,i.triggerRef);return(0,I.jsx)(gr.button,{type:`button`,"aria-haspopup":`dialog`,"aria-expanded":i.open,"aria-controls":i.open?i.contentId:void 0,"data-state":bo(i.open),...r,ref:a,onClick:Rn(e.onClick,i.onOpenToggle)})},`DialogTrigger`)),to=`DialogPortal`,[no,ro]=Ja(to,{forceMount:void 0}),io=Ka(e=>{let{__scopeDialog:t,forceMount:n,children:r,container:i}=e,a=Za(to,t);return(0,I.jsx)(no,{scope:t,forceMount:n,children:T.Children.map(r,e=>(0,I.jsx)(ci,{present:n||a.open,children:(0,I.jsx)(ii,{asChild:!0,container:i,children:e})}))})},`DialogPortal`),ao=`DialogOverlay`,oo=T.forwardRef(Ka(function(e,t){let n=ro(ao,e.__scopeDialog),{forceMount:r=n.forceMount,...i}=e,a=Za(ao,e.__scopeDialog);return a.modal?(0,I.jsx)(ci,{present:r||a.open,children:(0,I.jsx)(co,{...i,ref:t})}):null},`DialogOverlay`)),so=ze(`DialogOverlay.RemoveScroll`),co=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(ao,n),a=Ie(t,Ar());return(0,I.jsx)(Fa,{as:so,allowPinchZoom:!0,shards:T.useMemo(()=>[i.contentRef,...i.branchNodes.map(e=>({current:e}))],[i.contentRef,i.branchNodes]),children:(0,I.jsx)(gr.div,{"data-state":bo(i.open),...r,ref:a,style:{pointerEvents:`auto`,...r.style}})})},`DialogOverlayImpl`)),lo=`DialogContent`,uo=T.forwardRef(Ka(function(e,t){let n=ro(lo,e.__scopeDialog),{forceMount:r=n.forceMount,...i}=e,a=Za(lo,e.__scopeDialog);return(0,I.jsx)(ci,{present:r||a.open,children:a.modal?(0,I.jsx)(fo,{...i,ref:t}):(0,I.jsx)(po,{...i,ref:t})})},`DialogContent`)),fo=T.forwardRef(Ka(function(e,t){let n=Za(lo,e.__scopeDialog),r=T.useRef(null),i=Ie(t,n.contentRef,r);return T.useEffect(()=>{let e=r.current;if(e)return Wa(e)},[]),(0,I.jsx)(mo,{...e,ref:i,trapFocus:n.open,disableOutsidePointerEvents:n.open,onCloseAutoFocus:Rn(e.onCloseAutoFocus,e=>{e.preventDefault(),n.triggerRef.current?.focus()}),onPointerDownOutside:Rn(e.onPointerDownOutside,e=>{let t=e.detail.originalEvent,n=t.button===0&&t.ctrlKey===!0;(t.button===2||n)&&e.preventDefault()}),onFocusOutside:Rn(e.onFocusOutside,e=>e.preventDefault())})},`DialogContentModal`)),po=T.forwardRef(Ka(function(e,t){let n=Za(lo,e.__scopeDialog),r=T.useRef(!1),i=T.useRef(!1);return(0,I.jsx)(mo,{...e,ref:t,trapFocus:!1,disableOutsidePointerEvents:!1,onCloseAutoFocus:t=>{e.onCloseAutoFocus?.(t),t.defaultPrevented||(r.current||n.triggerRef.current?.focus(),t.preventDefault()),r.current=!1,i.current=!1},onInteractOutside:t=>{e.onInteractOutside?.(t),t.defaultPrevented||(r.current=!0,t.detail.originalEvent.type===`pointerdown`&&(i.current=!0));let a=t.target;n.triggerRef.current?.contains(a)&&t.preventDefault(),t.detail.originalEvent.type===`focusin`&&i.current&&t.preventDefault()}})},`DialogContentNonModal`)),mo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,trapFocus:r,onOpenAutoFocus:i,onCloseAutoFocus:a,"aria-describedby":o,children:s,...c}=e,l=Za(lo,n);return yi(),(0,I.jsx)(Ur,{registry:l.branchRegistry,children:(0,I.jsx)(Vr,{asChild:!0,loop:!0,trapped:r,branches:l.branchNodes,onMountAutoFocus:i,onUnmountAutoFocus:a,children:(0,I.jsx)(kr,{role:`dialog`,id:l.contentId,"aria-labelledby":l.titlePresent?l.titleId:void 0,"aria-describedby":l.descriptionPresent?yo(o,l.descriptionId):o,"data-state":bo(l.open),...c,ref:t,deferPointerDownOutside:!0,onDismiss:()=>l.onOpenChange(!1),children:s})})})},`DialogContentImpl`)),ho=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(`DialogTitle`,n),{setTitleCount:a}=i;return Jn(()=>(a(e=>e+1),()=>a(e=>e-1)),[a]),(0,I.jsx)(gr.h2,{id:i.titleId,...r,ref:t})},`DialogTitle`)),go=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(`DialogDescription`,n),{setDescriptionCount:a}=i;return Jn(()=>(a(e=>e+1),()=>a(e=>e-1)),[a]),(0,I.jsx)(gr.p,{id:i.descriptionId,...r,ref:t})},`DialogDescription`)),_o=`DialogClose`,vo=T.forwardRef(Ka(function(e,t){let{__scopeDialog:n,...r}=e,i=Za(_o,n);return(0,I.jsx)(gr.button,{type:`button`,...r,ref:t,onClick:Rn(e.onClick,()=>i.onOpenChange(!1))})},`DialogClose`));function yo(...e){let t=new Set;for(let n of e)if(typeof n==`string`)for(let e of String(n).trim().split(/\s+/))e&&t.add(e);return t.size>0?Array.from(t).join(` `):void 0}Ka(yo,`concatAriaDescribedby`);function bo(e){return e?`open`:`closed`}Ka(bo,`getState`);var xo=Qa,So=eo,Co=ho,wo=go;function To({className:e,children:t,...n}){return(0,I.jsxs)(io,{children:[(0,I.jsx)(oo,{className:`dialog-overlay`}),(0,I.jsxs)(uo,{className:An(`dialog-content`,e),...n,children:[t,(0,I.jsx)(vo,{className:`dialog-close`,"aria-label":`Close dialog`,children:(0,I.jsx)(je,{size:18})})]})]})}var Eo=Object.defineProperty,Do=(e,t)=>Eo(e,`name`,{value:t,configurable:!0}),[Oo,ko]=Kn(`AlertDialog`,[Ya]),Ao=Ya(),jo=Do(e=>{let{__scopeAlertDialog:t,...n}=e,r=Ao(t);return(0,I.jsx)(Qa,{...r,...n,modal:!0})},`AlertDialog`);T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(eo,{...i,...r,ref:t})},`AlertDialogTrigger`));var Mo=Do(e=>{let{__scopeAlertDialog:t,...n}=e,r=Ao(t);return(0,I.jsx)(io,{...r,...n})},`AlertDialogPortal`),No=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(oo,{...i,...r,ref:t})},`AlertDialogOverlay`)),[Po,Fo]=Oo(`AlertDialogContent`),Io=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,children:r,...i}=e,a=Ao(n),o=Ie(t,T.useRef(null)),s=T.useRef(null);return(0,I.jsx)(Po,{scope:n,cancelRef:s,children:(0,I.jsx)(uo,{role:`alertdialog`,...a,...i,ref:o,onOpenAutoFocus:Rn(i.onOpenAutoFocus,e=>{e.preventDefault(),s.current?.focus({preventScroll:!0})}),onPointerDownOutside:e=>e.preventDefault(),onInteractOutside:e=>e.preventDefault(),children:r})})},`AlertDialogContent`)),Lo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(ho,{...i,...r,ref:t})},`AlertDialogTitle`)),Ro=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(go,{...i,...r,ref:t})},`AlertDialogDescription`)),zo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,i=Ao(n);return(0,I.jsx)(vo,{...i,...r,ref:t})},`AlertDialogAction`)),Bo=`AlertDialogCancel`,Vo=T.forwardRef(Do(function(e,t){let{__scopeAlertDialog:n,...r}=e,{cancelRef:i}=Fo(Bo,n),a=Ao(n),o=Ie(t,i);return(0,I.jsx)(vo,{...a,...r,ref:o})},`AlertDialogCancel`)),Ho=jo,Uo=Lo,Wo=Ro,z=zo,B=Vo;function Go({children:e,...t}){return(0,I.jsxs)(Mo,{children:[(0,I.jsx)(No,{className:`dialog-overlay`}),(0,I.jsx)(Io,{className:`dialog-content`,...t,children:e})]})}var Ko=`<!-- ======================= CALL ======================= -->\r
+<section\r
+  id="tab-call"\r
+  class="grid call-grid"\r
+  aria-label="Voice banking workspace"\r
+>\r
+  <div class="card conversation-card">\r
+    <div class="row between panel-heading">\r
+      <div class="row">\r
+        <span class="panel-icon">N</span>\r
+        <div>\r
+          <h2>Your banking conversation</h2>\r
+          <div class="muted">Nishabdha AI &middot; Voice & text</div>\r
+        </div>\r
+      </div>\r
+      <span id="callState" class="pill grey">Not connected</span>\r
+    </div>\r
+    <div\r
+      id="chat"\r
+      class="chat"\r
+      role="log"\r
+      aria-live="polite"\r
+      aria-label="Banking conversation"\r
+    >\r
+      <div class="conversation-empty empty">\r
+        <div class="sound-glyph" aria-hidden="true">\r
+          <i></i><i></i><i></i><i></i><i></i>\r
+        </div>\r
+        <h3>A familiar voice.<br />A safer conversation.</h3>\r
+        <p>\r
+          Ask about your account or request a banking action.<br />You stay in\r
+          control of every transfer.\r
+        </p>\r
+        <div class="suggestion-row">\r
+          <span>&ldquo;What's my balance?&rdquo;</span\r
+          ><span>&ldquo;Block my debit card&rdquo;</span>\r
+        </div>\r
+      </div>\r
+    </div>\r
+    <form id="typeForm" class="row composer" autocomplete="off">\r
+      <input\r
+        id="typeText"\r
+        aria-label="Message to bank agent"\r
+        placeholder="Type a message to your bank agent..."\r
+      /><button id="typeBtn" aria-label="Send message">\r
+        Send &#8599;\r
+      </button>\r
+    </form>\r
+    <div class="conversation-footnote">\r
+      <span class="small-dot"></span> Send a message to start. Transfers always\r
+      require your passkey approval.\r
+    </div>\r
+  </div>\r
+  <div class="session-column">\r
+    <div class="card voice-card">\r
+      <div class="row between">\r
+        <span class="lbl">VOICE SESSION</span\r
+        ><span class="session-tag">BROWSER AUDIO</span>\r
+      </div>\r
+      <div class="voice-orbit" aria-hidden="true">\r
+        <div class="orbit-ring"></div>\r
+        <div class="orbit-ring inner"></div>\r
+        <div class="voice-core">\r
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>\r
+        </div>\r
+      </div>\r
+      <h2>Let's talk securely.</h2>\r
+      <p class="muted">\r
+        Your voice starts the conversation.<br />Your passkey approves the\r
+        action.\r
+      </p>\r
+      <label class="voice-language" for="lang"\r
+        >Conversation language<select id="lang">\r
+          <option value="en">English</option>\r
+          <option value="hi">हिन्दी</option>\r
+          <option value="kn">ಕನ್ನಡ</option>\r
+        </select></label\r
+      >\r
+      <div class="row call-actions">\r
+        <button id="startBtn">Start a secure call &#8599;</button\r
+        ><button id="endBtn" class="danger" disabled>End call</button>\r
+      </div>\r
+      <div class="micwrap">\r
+        <button id="micBtn" class="mic" disabled aria-pressed="false">\r
+          Mic off\r
+        </button>\r
+        <div class="meter" aria-hidden="true"><b id="meter"></b></div>\r
+        <div id="micHint" class="muted">\r
+          Microphone pauses while the agent speaks. Tap to interrupt.\r
+        </div>\r
+        <button id="doneBtn" class="ghost" disabled>\r
+          Finish this utterance\r
+        </button>\r
+      </div>\r
+    </div>\r
+    <details class="card audio-upload">\r
+      <summary>Test with a recorded clip <span>+</span></summary>\r
+      <p class="muted">\r
+        Use consented genuine or synthetic audio. The clip is submitted as a new\r
+        caller utterance.\r
+      </p>\r
+      <label for="clipFile" class="lbl">Audio file</label\r
+      ><input id="clipFile" type="file" accept="audio/*" /><button\r
+        id="clipBtn"\r
+        class="ghost"\r
+        disabled\r
+      >\r
+        Send audio clip\r
+      </button>\r
+    </details>\r
+  </div>\r
+</section>\r
+\r
+<!-- ======================= PHONE APP ======================= -->\r
+<section\r
+  id="tab-phone"\r
+  class="grid customer-grid"\r
+  hidden\r
+  aria-label="Customer approval app"\r
+>\r
+  <div class="card customer-account">\r
+    <div class="row between">\r
+      <div>\r
+        <div class="lbl">YOUR TRUSTED BANK APP</div>\r
+        <h2 id="pName">Loading customer...</h2>\r
+      </div>\r
+      <span id="pConn" class="pill grey">offline</span>\r
+    </div>\r
+    <div id="pBalance" class="account-balance">\r
+      <div class="empty">Open the customer app to load balances.</div>\r
+    </div>\r
+    <div class="row between">\r
+      <h2>Approvals & activity</h2>\r
+      <span class="pill grey">Exact action only</span>\r
+    </div>\r
+    <div id="pNotifs" class="list">\r
+      <div class="empty approval-empty">\r
+        You're in control.<br />New requests and security alerts will appear\r
+        here.\r
+      </div>\r
+    </div>\r
+  </div>\r
+  <div class="customer-tools">\r
+    <div class="card">\r
+      <div class="lbl">BANK & AGENT IDENTITY</div>\r
+      <h2>Trust goes both ways.</h2>\r
+      <p class="muted">\r
+        Verify the signed bank session or give an assistant a single, limited\r
+        permission.\r
+      </p>\r
+      <button id="pCheckBank" class="ghost">Verify bank session &#8599;</button\r
+      ><button id="provisionPasskey" class="ghost">\r
+        Set up passkey with bank staff\r
+      </button>\r
+      <div class="divider"></div>\r
+      <div class="row between">\r
+        <h3>Support assistant</h3>\r
+        <span class="pill grey">1 ticket &middot; 10 min</span>\r
+      </div>\r
+      <button id="delegateDemo" class="ghost">\r
+        Authorize an AI support assistant</button\r
+      ><button id="runDelegate" hidden>Run authorized AI ticket demo</button\r
+      ><button id="revokeDelegate" class="danger" hidden>\r
+        Revoke assistant permission\r
+      </button>\r
+      <div\r
+        id="securityStatus"\r
+        class="security-status muted"\r
+        role="status"\r
+      ></div>\r
+    </div>\r
+    <div class="card">\r
+      <h2>Your cards</h2>\r
+      <div id="pCards" class="list"></div>\r
+    </div>\r
+  </div>\r
+</section>\r
+\r
+<!-- ======================= FRAUD DESK ======================= -->\r
+<section\r
+  id="tab-desk"\r
+  class="grid3"\r
+  hidden\r
+  aria-label="Fraud investigation desk"\r
+>\r
+  <div class="card">\r
+    <div class="row between">\r
+      <h2>Session inbox</h2>\r
+      <span id="dConn" class="pill grey">offline</span>\r
+    </div>\r
+    <div id="dCalls" class="list">\r
+      <div class="empty">Live and recent calls appear here.</div>\r
+    </div>\r
+    <div class="row between">\r
+      <h2>Review queue</h2>\r
+      <button id="dRefresh" class="ghost">Refresh</button>\r
+    </div>\r
+    <div id="dTickets" class="list"><div class="empty">No tickets.</div></div>\r
+    <div class="row">\r
+      <button id="dAudit" class="ghost">Verify audit log</button\r
+      ><button id="dReset" class="danger">Reset demo bank</button>\r
+    </div>\r
+    <details class="outbound-control">\r
+      <summary>Open an outbound bank session</summary>\r
+      <p class="muted">\r
+        Staff authorization required. Create a browser demo session for the\r
+        selected customer, then verify its signed proof in the customer app.\r
+      </p>\r
+      <label class="lbl" for="outboundReason">Call reason</label>\r
+      <input\r
+        id="outboundReason"\r
+        maxlength="200"\r
+        value="Account security check"\r
+      />\r
+      <button id="dOutbound" class="ghost">Start outbound demo call</button>\r
+    </details>\r
+  </div>\r
+  <div class="card">\r
+    <div class="row between">\r
+      <div>\r
+        <div class="lbl">Selected call</div>\r
+        <h2 id="sTitle">None</h2>\r
+      </div>\r
+      <span id="sRisk" class="pill grey">unknown</span>\r
+    </div>\r
+    <div class="row between">\r
+      <div>\r
+        <div class="big" id="sTrust">–</div>\r
+        <div class="lbl">risk indicator</div>\r
+      </div>\r
+      <dl class="kv">\r
+        <dt>Speaker match</dt>\r
+        <dd id="sSpk">–</dd>\r
+        <dt>Synthetic signal (recent)</dt>\r
+        <dd id="sSyn">–</dd>\r
+        <dt>Pressure</dt>\r
+        <dd id="sPress">–</dd>\r
+      </dl>\r
+    </div>\r
+    <div>\r
+      <div class="lbl">\r
+        Voice checks · bar height = speaker match · red = synthetic or swap\r
+      </div>\r
+      <div id="sWave" class="wave"></div>\r
+    </div>\r
+    <div class="lbl">Decision timeline</div>\r
+    <div id="sLog" class="log"><div>Pick a call on the left.</div></div>\r
+    <div class="row">\r
+      <button id="sReport" class="ghost" disabled>Evidence report</button>\r
+      <button id="sKill" class="danger" disabled>End this call</button>\r
+    </div>\r
+    <div id="sReportBox" hidden class="item"></div>\r
+  </div>\r
+</section>\r
+\r
+<!-- ======================= KNOWLEDGE BASE & RAG ======================= -->\r
+<section id="tab-knowledge" class="grid" hidden>\r
+  <!-- Left column: Grounded RAG Assistant -->\r
+  <div class="card">\r
+    <div class="row between">\r
+      <h2>Reviewed policy library</h2>\r
+      <span id="ragStatus" class="pill">Ready</span>\r
+    </div>\r
+    <div class="muted">\r
+      Find an explanation in the reviewed demo policies. Answers include the\r
+      accepted source excerpt; the assistant abstains when a source is missing.\r
+    </div>\r
+\r
+    <div>\r
+      <div class="lbl" style="margin-bottom: 6px">\r
+        Explore a reviewed policy\r
+      </div>\r
+      <div class="row" id="quickQueries">\r
+        <button\r
+          type="button"\r
+          class="ghost"\r
+          data-q="How do I approve a transfer with a passkey?"\r
+        >\r
+          Passkey approval\r
+        </button>\r
+        <button\r
+          type="button"\r
+          class="ghost"\r
+          data-q="How do I verify the bank agent session?"\r
+        >\r
+          Verify a bank agent\r
+        </button>\r
+        <button\r
+          type="button"\r
+          class="ghost"\r
+          data-q="What can the support assistant delegate do?"\r
+        >\r
+          Delegate permissions\r
+        </button>\r
+      </div>\r
+    </div>\r
+\r
+    <form id="ragForm" class="row" autocomplete="off" style="margin-top: 4px">\r
+      <input\r
+        id="ragInput"\r
+        placeholder="Type a banking or scam query..."\r
+        style="flex: 1"\r
+        required\r
+      />\r
+      <button id="ragSubmit">Ask RAG</button>\r
+    </form>\r
+\r
+    <div\r
+      id="ragResults"\r
+      hidden\r
+      style="display: grid; gap: 12px; margin-top: 6px"\r
+    >\r
+      <div id="ragSpokenBox" class="notif bank">\r
+        <div class="lbl" style="color: var(--accent)">Accepted answer</div>\r
+        <div id="ragSpoken" style="font-weight: 600; font-size: 0.95rem"></div>\r
+      </div>\r
+\r
+      <div>\r
+        <div class="row between">\r
+          <div class="lbl">Source-backed excerpts</div>\r
+          <span id="ragVerifBadge" class="pill"></span>\r
+        </div>\r
+        <div\r
+          id="ragSentences"\r
+          style="display: grid; gap: 6px; margin-top: 6px"\r
+        ></div>\r
+      </div>\r
+\r
+      <details id="ragEvidenceDetails">\r
+        <summary class="lbl">\r
+          Retrieved Evidence & Sources (<span id="ragEvCount">0</span> items)\r
+        </summary>\r
+        <div\r
+          id="ragEvidenceList"\r
+          class="list"\r
+          style="margin-top: 8px; max-height: 260px; overflow-y: auto"\r
+        ></div>\r
+      </details>\r
+    </div>\r
+  </div>\r
+\r
+  <!-- Right column: Research, Web Scraping & Knowledge Explorer -->\r
+  <div class="card">\r
+    <div class="row between">\r
+      <h2>Source review workspace</h2>\r
+      <span id="kbStatsPill" class="pill grey">Loading KB...</span>\r
+    </div>\r
+\r
+    <!-- Tool 1: Autonomous Research -->\r
+    <div class="item">\r
+      <div class="lbl">01 / Research a topic</div>\r
+      <div class="muted">\r
+        Staff access required. Searches approved hosts and quarantines fetched\r
+        material for review. Live calls cannot launch research.\r
+      </div>\r
+      <form\r
+        id="researchForm"\r
+        class="row"\r
+        autocomplete="off"\r
+        style="margin-top: 4px"\r
+      >\r
+        <input\r
+          id="researchInput"\r
+          placeholder="e.g. RBI cyber security guidelines 2026"\r
+          style="flex: 1"\r
+          required\r
+        />\r
+        <button id="researchBtn" class="ghost">Run Research</button>\r
+      </form>\r
+      <div\r
+        id="researchProgress"\r
+        hidden\r
+        class="log"\r
+        style="\r
+          margin-top: 8px;\r
+          max-height: 160px;\r
+          background: #f9fcfb;\r
+          padding: 8px;\r
+          border-radius: 8px;\r
+        "\r
+      ></div>\r
+    </div>\r
+\r
+    <!-- Tool 2: Direct Web Scraper -->\r
+    <div class="item">\r
+      <div class="lbl">02 / Submit an approved source</div>\r
+      <div class="muted">\r
+        Only allowlisted public HTTPS destinations are accepted. Inspect the\r
+        exact text and approve its hash before publishing.\r
+      </div>\r
+      <form\r
+        id="scrapeForm"\r
+        class="row"\r
+        autocomplete="off"\r
+        style="margin-top: 4px"\r
+      >\r
+        <input\r
+          id="scrapeInput"\r
+          type="url"\r
+          placeholder="https://example.com/advisory.html"\r
+          style="flex: 1"\r
+          required\r
+        />\r
+        <button id="scrapeBtn" class="ghost">Scrape URL</button>\r
+      </form>\r
+      <div\r
+        id="scrapeResult"\r
+        hidden\r
+        class="muted"\r
+        style="margin-top: 4px; font-size: 0.82rem"\r
+      ></div>\r
+    </div>\r
+\r
+    <!-- Tool 3: Knowledge Base Ledger -->\r
+    <div>\r
+      <div class="row between" style="margin-bottom: 6px">\r
+        <div class="lbl">Knowledge Base Claims Ledger</div>\r
+        <button\r
+          id="refreshKbBtn"\r
+          class="ghost"\r
+          style="padding: 3px 8px; font-size: 0.75rem"\r
+        >\r
+          Refresh\r
+        </button>\r
+      </div>\r
+      <div\r
+        id="kbClaimsList"\r
+        class="list"\r
+        style="max-height: 240px; overflow-y: auto"\r
+      >\r
+        <div class="empty">Loading claims...</div>\r
+      </div>\r
+    </div>\r
+  </div>\r
+</section>\r
+\r
+<!-- ======================= JUDGE DEMO MODE ======================= -->\r
+<section\r
+  id="tab-demo"\r
+  class="grid"\r
+  aria-label="Judge Demo Evaluation"\r
+  hidden\r
+>\r
+  <!-- Left column: Scenario Triggers & Live Input -->\r
+  <div class="card" style="gap: 16px;">\r
+    <div class="row between panel-heading">\r
+      <div class="row">\r
+        <span class="panel-icon" style="background: #0f7a5c; color: #fff;">★</span>\r
+        <div>\r
+          <h2>Judge Demonstration Controls</h2>\r
+          <div class="muted">SIH Track 03 · Live Attack Scenarios &amp; Evaluation</div>\r
+        </div>\r
+      </div>\r
+      <button id="btnResetDemoState" class="danger" style="padding: 6px 12px; font-size: 0.8rem;">\r
+        ↺ Reset Demo State\r
+      </button>\r
+    </div>\r
+\r
+    <!-- Active Hardware & API Status -->\r
+    <div style="background: var(--accent-soft); padding: 10px 14px; border-radius: 12px; font-size: 0.82rem; display: flex; flex-direction: column; gap: 4px;">\r
+      <div class="row between">\r
+        <span class="lbl">HARDWARE ACCELERATION</span>\r
+        <span id="demoHwBadge" class="pill" style="background:#0f7a5c; color:#fff;">CUDA (RTX 4060)</span>\r
+      </div>\r
+      <div class="row between">\r
+        <span class="lbl">DEEPFAKE ENGINE</span>\r
+        <span id="demoDetectBadge" class="pill">DetectifAI API (Configured)</span>\r
+      </div>\r
+      <div class="row between">\r
+        <span class="lbl">SPEECH PIPELINE</span>\r
+        <span id="demoSttBadge" class="pill">Sarvam AI (saaras:v4) + Whisper</span>\r
+      </div>\r
+    </div>\r
+\r
+    <!-- 4 Core Scenarios -->\r
+    <div>\r
+      <div class="lbl" style="margin-bottom: 8px;">FOUR CORE DEMONSTRATION SCENARIOS</div>\r
+      <div style="display: grid; gap: 8px;">\r
+        <button id="btnDemo1" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">\r
+          <div class="row between" style="margin-bottom: 4px;">\r
+            <strong>DEMO 1: Legitimate Caller</strong>\r
+            <span class="pill" style="background: #e6f4ef; color: #0f7a5c;">ALLOW</span>\r
+          </div>\r
+          <div class="muted" style="font-size: 0.8rem;">Natural voice asks for account balance. Genuine human audio, verified companion app session, balance retrieved safely.</div>\r
+        </button>\r
+\r
+        <button id="btnDemo2" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">\r
+          <div class="row between" style="margin-bottom: 4px;">\r
+            <strong>DEMO 2: Human Scammer (Real Voice)</strong>\r
+            <span class="pill bad">REFUSE / BLOCK</span>\r
+          </div>\r
+          <div class="muted" style="font-size: 0.8rem;">Natural human voice (0% synthetic) impersonates bank security &amp; demands OTP. Flagged by behavioral risk &amp; coercion analysis, NOT deepfake.</div>\r
+        </button>\r
+\r
+        <button id="btnDemo3" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">\r
+          <div class="row between" style="margin-bottom: 4px;">\r
+            <strong>DEMO 3: AI Voice Clone</strong>\r
+            <span class="pill bad">DETECTIFAI FLAG (p=0.98)</span>\r
+          </div>\r
+          <div class="muted" style="font-size: 0.8rem;">Cloned synthetic voice attempts recovery phone change. DetectifAI deepfake engine flags synthetic audio, creating a critical security ticket.</div>\r
+        </button>\r
+\r
+        <button id="btnDemo4" class="ghost" style="text-align: left; padding: 12px; border-radius: 12px; display: block; border: 1px solid var(--line);">\r
+          <div class="row between" style="margin-bottom: 4px;">\r
+            <strong>DEMO 4: Unauthorized Transfer</strong>\r
+            <span class="pill warn">GATEWAY BLOCKED</span>\r
+          </div>\r
+          <div class="muted" style="font-size: 0.8rem;">Authenticated user attempts transfer from an unauthorized account. Action gateway blocks execution; zero database state mutation.</div>\r
+        </button>\r
+      </div>\r
+    </div>\r
+\r
+    <!-- Live Microphone Input -->\r
+    <div>\r
+      <div class="lbl" style="margin-bottom: 8px;">LIVE MICROPHONE EVALUATION</div>\r
+      <div style="background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px;">\r
+        <div class="row between">\r
+          <span class="muted" style="font-size: 0.85rem;">Speak into your microphone in real time:</span>\r
+          <span id="demoMicState" class="pill grey">Idle</span>\r
+        </div>\r
+        <div class="row" style="gap: 8px;">\r
+          <button id="btnDemoMicRecord" style="flex: 1; background: #0f7a5c;">🎤 Start Live Recording</button>\r
+          <button id="btnDemoMicStop" class="danger" style="flex: 1; display: none;">⏹ Stop &amp; Analyze</button>\r
+        </div>\r
+      </div>\r
+    </div>\r
+\r
+    <!-- Text Attack Simulator -->\r
+    <div>\r
+      <div class="lbl" style="margin-bottom: 8px;">INTERACTIVE ATTACK SIMULATOR</div>\r
+      <form id="demoSimForm" class="row" style="gap: 6px;" autocomplete="off">\r
+        <input id="demoSimInput" placeholder="Try: I am from police, tell me your OTP immediately..." style="flex: 1;" required />\r
+        <button id="btnDemoSimSubmit" class="ghost" style="white-space: nowrap;">Evaluate</button>\r
+      </form>\r
+    </div>\r
+  </div>\r
+\r
+  <!-- Right column: 9-Stage Visual Timeline & Decision Report -->\r
+  <div class="card" style="gap: 14px;">\r
+    <div class="row between panel-heading">\r
+      <div>\r
+        <h2>Security Evaluation &amp; Decision Report</h2>\r
+        <div class="muted">Real-time inspection of the 9-stage verification pipeline</div>\r
+      </div>\r
+      <span id="demoOutcomeBadge" class="pill grey" style="font-size: 0.85rem; padding: 4px 12px;">READY FOR TEST</span>\r
+    </div>\r
+\r
+    <!-- Executive Decision & Provenance Summary -->\r
+    <div id="demoSummaryBox" style="background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px;">\r
+      <div class="row between">\r
+        <span class="lbl">FINAL POLICY OUTCOME</span>\r
+        <strong id="demoFinalOutcome" style="font-size: 1.05rem; color: var(--accent);">Awaiting Scenario Run</strong>\r
+      </div>\r
+      <div id="demoExplanation" class="muted" style="font-size: 0.88rem;">\r
+        Click any scenario on the left or speak into the microphone to run real-time verification.\r
+      </div>\r
+      <div class="row between" style="padding-top: 6px; border-top: 1px dashed var(--line); font-size: 0.8rem;">\r
+        <span>State Mutation Proof: <strong id="demoStateProof">Unchanged</strong></span>\r
+        <span>Latency: <strong id="demoLatency">–</strong></span>\r
+      </div>\r
+    </div>\r
+\r
+    <!-- 9-Stage Timeline -->\r
+    <div>\r
+      <div class="lbl" style="margin-bottom: 8px;">9-STAGE VERIFICATION PIPELINE</div>\r
+      <div id="demoTimeline" style="display: grid; gap: 8px; max-height: 480px; overflow-y: auto; padding-right: 4px;">\r
+        <div class="empty">Pipeline idle. Run a scenario to see live stage-by-stage execution.</div>\r
+      </div>\r
+    </div>\r
+  </div>\r
+</section>\r
+\r
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>\r
+`,qo=`modulepreload`,Jo=function(e){return`/static/ui/`+e},Yo={},Xo=function(e){return e.pathname.endsWith(`.css`)},Zo=function(e,t,n){if(t in e)return e[t];let r=n();if(!r){e[t]=void 0;return}let i=r.then(()=>{e[t]=void 0},n=>{throw e[t]=void 0,n});return e[t]=i,i},Qo=function(e,t,n){let r=Promise.resolve();if(t&&t.length>0){let e,i=document.querySelector(`meta[property=csp-nonce]`),a=i?.nonce||i?.getAttribute(`nonce`);function o(e){return Promise.all(e.map(e=>Promise.resolve(e).then(e=>({status:`fulfilled`,value:e}),e=>({status:`rejected`,reason:e}))))}function s(e){return import.meta.resolve?new URL(import.meta.resolve(e)):new URL(e,import.meta.url)}r=o(t.map(t=>{t=Jo(t,n);let r=s(t),i=Xo(r);return Zo(Yo,r.href,()=>{if(e===void 0){e={all:new Set,styles:new Set};let t=document.getElementsByTagName(`link`);for(let n=t.length-1;n>=0;n--){let r=t[n];e.all.add(r.href),r.rel===`stylesheet`&&e.styles.add(r.href)}}if((i?e.styles:e.all).has(r.href))return;let t=document.createElement(`link`);if(t.rel=i?`stylesheet`:qo,i||(t.as=`script`),t.crossOrigin=``,t.href=r.href,a&&t.setAttribute(`nonce`,a),document.head.appendChild(t),i)return new Promise((e,n)=>{t.addEventListener(`load`,e),t.addEventListener(`error`,()=>n(Error(`Unable to preload CSS for ${r}`)))})})}).filter(e=>e!==void 0))}function i(e){let t=new Event(`vite:preloadError`,{cancelable:!0});if(t.payload=e,window.dispatchEvent(t),!t.defaultPrevented)throw e}return r.then(t=>{for(let e of t||[])e.status===`rejected`&&i(e.reason);return e().catch(i)})},V=(0,T.lazy)(()=>Qo(()=>import(`./PolicyAssistant-2Sisx9iR.js`),[])),$o={call:{label:`Voice workspace`,icon:D,eyebrow:`VOICE BANKING, WITH ASSURANCE`,title:`Every voice. Verified.`,description:`A conversation that feels natural. Controls that keep you in charge.`},phone:{label:`Customer app`,icon:A,eyebrow:`YOUR ACCOUNT. YOUR PERMISSION.`,title:`You make the final call.`,description:`Review the exact action, verify your bank, and approve with a passkey.`},desk:{label:`Fraud desk`,icon:Ee,eyebrow:`EVIDENCE BEFORE ACTION`,title:`See the signal. Understand the decision.`,description:`Follow live sessions, inspect voice evidence, and resolve flagged activity.`},knowledge:{label:`Knowledge library`,icon:ue,eyebrow:`REVIEWED SOURCES, CLEAR ANSWERS`,title:`Good answers start with evidence.`,description:`Explore approved policies and review new sources before they reach a caller.`},demo:{label:`Judge Demo`,icon:ke,eyebrow:`LIVE EVALUATION & VERIFICATION`,title:`Unclone Agent Guard Demo`,description:`Live demonstration mode for hackathon judging: 4 core attack scenarios, live microphone input, 9-stage verification timeline, and deterministic action gateway enforcement.`}},es=(0,T.memo)(function(){let e=(0,T.useRef)(null),[t,n]=(0,T.useState)(``);return(0,T.useEffect)(()=>{let e=!1,t=e=>new Promise((t,n)=>{let r=document.createElement(`script`);r.src=e,r.onload=()=>t(),r.onerror=()=>n(Error(`Unable to load `+e)),document.body.append(r)});return(async()=>{try{await t(`/static/workspace.js`),await t(`/static/security.js`),e||document.dispatchEvent(new Event(`nishabdha:ready`))}catch{e||n(`The workspace could not load. Refresh the page to retry.`)}})(),()=>{e=!0}},[]),(0,I.jsxs)(I.Fragment,{children:[t&&(0,I.jsx)(`div`,{className:`inline-error`,role:`alert`,children:t}),(0,I.jsx)(`div`,{ref:e,dangerouslySetInnerHTML:{__html:Ko}})]})});function ts(){let[e,t]=(0,T.useState)(`demo`),[n,r]=(0,T.useState)(!1),[i,a]=(0,T.useState)(()=>matchMedia(`(max-width:760px)`).matches),o=(0,T.useRef)(null),[s,c]=(0,T.useState)(!1),[l,u]=(0,T.useState)(!1),[d,f]=(0,T.useState)(`loading`),[p,m]=(0,T.useState)(`Checking providers`),[h,g]=(0,T.useState)(null),_=(0,T.useRef)(null);(0,T.useEffect)(()=>{let e=matchMedia(`(max-width:760px)`),t=()=>{a(e.matches),e.matches||r(!1)};return e.addEventListener(`change`,t),()=>e.removeEventListener(`change`,t)},[]),(0,T.useEffect)(()=>{if(!i||!n)return;let e=document.activeElement,t=document.body.style.overflow;document.body.style.overflow=`hidden`;let a=()=>Array.from(o.current?.querySelectorAll(`a[href],button:not([disabled]),summary,input:not([disabled]),select:not([disabled])`)||[]).filter(e=>e.offsetParent!==null);a()[0]?.focus();let s=e=>{if(e.key===`Escape`&&(e.preventDefault(),r(!1)),e.key===`Tab`){let t=a(),n=t[0],r=t.at(-1);e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}};return document.addEventListener(`keydown`,s),()=>{document.removeEventListener(`keydown`,s),document.body.style.overflow=t,e?.focus()}},[i,n]),(0,T.useEffect)(()=>{let e=e=>{let n=e.detail;n in $o&&t(n)},n=()=>u(!0);document.addEventListener(`nishabdha:tab`,e),document.addEventListener(`nishabdha:ready`,n),window.confirmTransaction=e=>new Promise(t=>{_.current=t,g(e)});let r=!0,i=()=>fetch(`/api/health`).then(e=>{if(!e.ok)throw Error();return e.json()}).then(e=>{if(!r)return;f(`online`);let t=e.voice?.chain||[];m(t.length?t.join(` + `):`Voice provider unavailable`)}).catch(()=>{r&&(f(`offline`),m(`Backend unavailable`))});i();let a=setInterval(i,3e4);return()=>{r=!1,clearInterval(a),document.removeEventListener(`nishabdha:tab`,e),document.removeEventListener(`nishabdha:ready`,n),_.current?.(!1),delete window.confirmTransaction}},[]);let v=e=>{t(e),r(!1),document.dispatchEvent(new CustomEvent(`nishabdha:navigate`,{detail:e}))},y=e=>{_.current?.(e),_.current=null,g(null)},b=$o[e];return(0,I.jsxs)(`div`,{className:`app-shell`,children:[(0,I.jsx)(`a`,{className:`skip-link`,href:`#workspace`,children:`Skip to workspace`}),n&&(0,I.jsx)(`button`,{className:`mobile-scrim`,"aria-label":`Close navigation`,tabIndex:-1,onClick:()=>r(!1)}),(0,I.jsxs)(`aside`,{ref:o,className:`sidebar `+(n?`sidebar-open`:``),inert:i&&!n,"aria-hidden":i&&!n,role:i&&n?`dialog`:void 0,"aria-modal":i&&n?!0:void 0,"aria-label":`Workspace navigation`,children:[(0,I.jsxs)(`a`,{className:`brand-lockup`,href:`/`,"aria-label":`Nishabdha home`,children:[(0,I.jsx)(`img`,{src:`/static/mark.svg`,alt:``}),(0,I.jsxs)(`div`,{children:[`Nishabdha`,(0,I.jsx)(`span`,{children:`THE VOICE TRUST LAYER`})]})]}),(0,I.jsx)(`div`,{className:`nav-section-label`,children:`WORKSPACE`}),(0,I.jsx)(`nav`,{className:`tabs`,"aria-label":`Main navigation`,children:Object.keys($o).map((t,n)=>{let r=$o[t].icon;return(0,I.jsxs)(`button`,{"data-tab":t,"aria-current":e===t?`page`:void 0,disabled:!l,onClick:()=>v(t),children:[(0,I.jsx)(r,{size:19}),(0,I.jsx)(`span`,{children:$o[t].label}),(0,I.jsxs)(`span`,{className:`nav-index`,"aria-hidden":`true`,children:[`0`,n+1]})]},t)})}),(0,I.jsxs)(`div`,{className:`sidebar-note`,children:[(0,I.jsx)(`div`,{className:`note-icon`,children:(0,I.jsx)(Se,{size:19})}),(0,I.jsx)(`h3`,{children:`Trust, in both directions.`}),(0,I.jsxs)(`p`,{children:[`Verify the caller.`,(0,I.jsx)(`br`,{}),`Prove the agent.`,(0,I.jsx)(`br`,{}),`Approve the exact action.`]}),(0,I.jsxs)(Pn,{variant:`ghost`,onClick:()=>c(!0),children:[(0,I.jsx)(we,{size:15}),` Ask a policy question`,` `,(0,I.jsx)(se,{size:14})]})]}),(0,I.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,I.jsxs)(`details`,{className:`staff-access`,children:[(0,I.jsxs)(`summary`,{children:[(0,I.jsx)(ve,{size:15}),` Staff access `,(0,I.jsx)(fe,{size:14})]}),(0,I.jsx)(`label`,{htmlFor:`staffKey`,children:`Staff API key`}),(0,I.jsx)(`input`,{id:`staffKey`,type:`password`,autoComplete:`off`,placeholder:`Enter staff key`}),(0,I.jsx)(`p`,{children:`Kept in this browser session. Required for fraud-desk and research controls.`})]}),(0,I.jsxs)(`div`,{className:`sidebar-foot`,children:[(0,I.jsx)(`span`,{className:`demo-dot`}),` SIMULATED BANKING `,(0,I.jsx)(`span`,{children:`v1.0`})]})]})]}),(0,I.jsxs)(`div`,{className:`main-shell`,inert:i&&n,children:[(0,I.jsxs)(`header`,{className:`app-topbar`,children:[(0,I.jsxs)(`div`,{className:`breadcrumb`,children:[(0,I.jsx)(`button`,{className:`mobile-menu`,"aria-label":`Open navigation`,onClick:()=>r(!0),children:(0,I.jsx)(k,{size:20})}),(0,I.jsx)(be,{size:17}),(0,I.jsx)(`span`,{children:`Workspace`}),(0,I.jsx)(fe,{size:14}),(0,I.jsx)(`strong`,{children:b.label})]}),(0,I.jsxs)(`div`,{className:`topbar-actions`,children:[(0,I.jsxs)(`span`,{className:`backend-state `+d,children:[(0,I.jsx)(`span`,{}),` `,d===`loading`?`Connecting`:d===`online`?`Backend connected`:`Connection unavailable`]}),(0,I.jsxs)(xo,{children:[(0,I.jsx)(So,{asChild:!0,children:(0,I.jsx)(Pn,{variant:`ghost`,size:`icon`,"aria-label":`About Nishabdha`,children:(0,I.jsx)(me,{size:19})})}),(0,I.jsxs)(To,{children:[(0,I.jsx)(`div`,{className:`dialog-symbol`,children:(0,I.jsx)(Ee,{})}),(0,I.jsx)(Co,{children:`Trust before every action.`}),(0,I.jsx)(wo,{children:`Nishabdha brings caller evidence, exact transaction approval, and signed agent identity into one banking workflow.`}),(0,I.jsxs)(`div`,{className:`about-steps`,children:[(0,I.jsxs)(`p`,{children:[(0,I.jsx)(D,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Check the current voice request`}),`Speaker and authenticity evidence belongs to this utterance.`]})]}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(ge,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Approve the exact transaction`}),`A passkey binds your confirmation to the frozen recipient and amount.`]})]}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(Ee,{size:19}),(0,I.jsxs)(`span`,{children:[(0,I.jsx)(`b`,{children:`Verify the bank session`}),`A signed record identifies the application session. Telephone audio alone does not establish this proof.`]})]})]}),(0,I.jsx)(`p`,{className:`muted`,children:`Banking actions are simulated. Live DetectifAI verification requires configured vendor credentials.`})]})]}),(0,I.jsx)(`span`,{className:`avatar`,children:`N`})]})]}),(0,I.jsx)(`div`,{id:`voiceModeBanner`,className:`mock-mode-banner`,role:`status`,hidden:!0}),(0,I.jsxs)(`main`,{id:`workspace`,children:[(0,I.jsxs)(`div`,{className:`page-heading`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsxs)(`div`,{className:`eyebrow`,children:[(0,I.jsx)(`span`,{}),b.eyebrow]}),(0,I.jsx)(`h1`,{children:b.title}),(0,I.jsx)(`p`,{children:b.description})]}),(0,I.jsxs)(`div`,{className:`customer-selector`,children:[(0,I.jsx)(`label`,{htmlFor:`customer`,children:`DEMO CUSTOMER`}),(0,I.jsx)(`select`,{id:`customer`,"aria-label":`Demo customer`,defaultValue:``})]})]}),(0,I.jsxs)(`div`,{className:`assurance-strip`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`01`}),(0,I.jsx)(D,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Caller evidence`}),(0,I.jsx)(`span`,{children:`Current utterance checks`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`VOICE`})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`02`}),(0,I.jsx)(ge,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Customer consent`}),(0,I.jsx)(`span`,{children:`Exact action · Passkey approval`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`APP`})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`step-number`,children:`03`}),(0,I.jsx)(Ee,{size:20}),(0,I.jsxs)(`p`,{children:[(0,I.jsx)(`b`,{children:`Controlled execution`}),(0,I.jsx)(`span`,{children:`One action · One signed receipt`})]}),(0,I.jsx)(`span`,{className:`step-tag`,children:`GATEWAY`})]})]}),(0,I.jsx)(es,{}),(0,I.jsxs)(`footer`,{className:`workspace-footer`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`span`,{className:`small-dot`}),` Nishabdha`,` `,(0,I.jsx)(`span`,{className:`footer-separator`,children:`/`}),` Built for Unclone Agents`]}),(0,I.jsxs)(`span`,{children:[`Voice provider: `,p]})]})]})]}),(0,I.jsxs)(Pn,{className:`assistant-launch`,onClick:()=>c(!0),"aria-label":`Open policy assistant`,children:[(0,I.jsx)(ke,{size:17}),(0,I.jsx)(`span`,{children:`Policy assistant`}),(0,I.jsx)(se,{size:15})]}),(0,I.jsx)(xo,{open:s,onOpenChange:c,children:(0,I.jsxs)(To,{className:`assistant-dialog`,children:[(0,I.jsxs)(`div`,{className:`assistant-heading`,children:[(0,I.jsx)(`span`,{className:`panel-icon`,children:(0,I.jsx)(ue,{size:19})}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(Co,{children:`Policy assistant`}),(0,I.jsx)(wo,{children:`Answers from reviewed Nishabdha policies`})]})]}),(0,I.jsx)(T.Suspense,{fallback:(0,I.jsx)(`div`,{className:`empty`,children:`Loading policy assistantâ€¦`}),children:(0,I.jsx)(V,{})})]})}),(0,I.jsx)(Ho,{open:!!h,onOpenChange:e=>{e||y(!1)},children:(0,I.jsxs)(Go,{children:[(0,I.jsx)(`div`,{className:`dialog-symbol`,children:(0,I.jsx)(ge,{})}),(0,I.jsx)(Uo,{children:`Review this transfer`}),(0,I.jsx)(Wo,{children:`Confirm these exact details before your passkey opens. If anything is wrong, cancel and start a new request.`}),h&&(0,I.jsxs)(`dl`,{className:`transaction-summary`,children:[(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`Amount`}),(0,I.jsx)(`dd`,{className:`transaction-amount`,children:new Intl.NumberFormat(`en-IN`,{style:`currency`,currency:h.currency||`INR`}).format(h.amount_paise/100)})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`To`}),(0,I.jsxs)(`dd`,{children:[h.payee_name,(0,I.jsxs)(`small`,{children:[`Account ending `,h.destination_last4]})]})]}),(0,I.jsxs)(`div`,{children:[(0,I.jsx)(`dt`,{children:`From`}),(0,I.jsxs)(`dd`,{children:[`Account ending `,h.source_last4]})]})]}),(0,I.jsxs)(`div`,{className:`dialog-actions`,children:[(0,I.jsx)(B,{asChild:!0,children:(0,I.jsx)(Pn,{variant:`outline`,onClick:()=>y(!1),children:`Cancel transfer`})}),(0,I.jsx)(z,{asChild:!0,children:(0,I.jsxs)(Pn,{onClick:()=>y(!0),children:[(0,I.jsx)(ge,{size:17}),` Continue with passkey`]})})]})]})})]})}(0,_.createRoot)(document.getElementById(`root`)).render((0,I.jsx)(ts,{}));export{s as _,Si as a,ki as c,Mn as d,Ee as f,o as g,p as h,Ti as i,Di as l,E as m,Mi as n,Ei as o,ue as p,Ai as r,Oi as s,ji as t,Pn as u,l as v};

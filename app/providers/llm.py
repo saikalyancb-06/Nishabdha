@@ -69,7 +69,7 @@ class LLM:
 
     @property
     def available(self) -> bool:
-        key = {"groq": self.s.groq_api_key, "openai": self.s.openai_api_key, "anthropic": self.s.anthropic_api_key, "gemini": self.s.gemini_api_key}.get(self.provider, "")
+        key = {"groq": self.s.effective_groq_key, "openai": self.s.openai_api_key, "anthropic": self.s.anthropic_api_key, "gemini": self.s.gemini_api_key}.get(self.provider, "")
         return self.provider != "none" and bool(key) and not self.breaker.is_open
 
     def _client(self) -> httpx.AsyncClient:
@@ -94,28 +94,32 @@ class LLM:
         p, c = self.provider, self._client()
         if p in ("groq", "openai"):
             url = "https://api.groq.com/openai/v1/chat/completions" if p == "groq" else "https://api.openai.com/v1/chat/completions"
-            key = self.s.groq_api_key if p == "groq" else self.s.openai_api_key
+            keys = self.s.groq_keys if p == "groq" else [self.s.openai_api_key]
             models = [self.model] + ([m for m in GROQ_FALLBACKS if m != self.model] if p == "groq" else [])
             last: Exception | None = None
-            for model in models:
-                body = {
-                    "model": model,
-                    "temperature": 0,
-                    "max_tokens": 1200,
-                    "response_format": {"type": "json_object"},
-                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-                }
-                if p == "groq":
-                    body.update(_reasoning_opts(model))
-                r = await c.post(url, headers={"Authorization": f"Bearer {key}"}, json=body)
-                if r.status_code in (400, 404) and ("model" in r.text.lower() and ("not" in r.text.lower() or "decommission" in r.text.lower())):
-                    log.warning("LLM model %s unavailable (%s); trying next", model, r.status_code)
-                    last = ProviderError(f"model {model} unavailable")
-                    continue
-                r.raise_for_status()
-                if model != self.model:
-                    self._model_override = model  # remember the working one
-                return _extract_json(r.json()["choices"][0]["message"]["content"])
+            for key in (keys or [""]):
+                for model in models:
+                    body = {
+                        "model": model,
+                        "temperature": 0,
+                        "max_tokens": 1200,
+                        "response_format": {"type": "json_object"},
+                        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+                    }
+                    if p == "groq":
+                        body.update(_reasoning_opts(model))
+                    r = await c.post(url, headers={"Authorization": f"Bearer {key}"}, json=body)
+                    if r.status_code == 429 and len(keys) > 1:
+                        log.warning("Groq key rate-limited (429); failing over to next key")
+                        break
+                    if r.status_code in (400, 404) and ("model" in r.text.lower() and ("not" in r.text.lower() or "decommission" in r.text.lower())):
+                        log.warning("LLM model %s unavailable (%s); trying next", model, r.status_code)
+                        last = ProviderError(f"model {model} unavailable")
+                        continue
+                    r.raise_for_status()
+                    if model != self.model:
+                        self._model_override = model  # remember the working one
+                    return _extract_json(r.json()["choices"][0]["message"]["content"])
             raise last or ProviderError("no LLM model available")
         if p == "anthropic":
             r = await c.post(

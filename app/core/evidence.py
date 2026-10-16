@@ -84,7 +84,10 @@ def _verdict(
         and all(
             (c.speaker_prob or 0) >= 0.5 for c in checks if c.speaker_prob is not None
         )
-        and any(c.speaker_prob is not None for c in checks)
+        and (
+            any(c.speaker_prob is not None for c in checks)
+            or (executed and all((c.synthetic_prob or 1.0) < 0.3 for c in checks if c.synthetic_prob is not None))
+        )
     ):
         label = "GENUINE CUSTOMER"
     else:

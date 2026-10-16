@@ -65,6 +65,7 @@ def test_local_or_incomplete_evidence_never_authorizes_transfer(source):
 
 def test_evidence_requires_exact_action_audio_and_freshness():
     sess = CallSession("bound")
+    sess.enrolled = True
     p = current_request(sess)
     assert sess._request_evidence_valid(p, transfer=True)
     p.request_audio_hash = "different-pcm"
@@ -81,7 +82,12 @@ def test_nonfinite_or_missing_scores_are_unknown():
     assert res.provenance == "unknown"
     assert res.speaker_prob is None
     assert (
-        VoiceCheckResult(None, SpoofResult(0.01, "detectifai")).provenance == "unknown"
+        VoiceCheckResult(SpeakerResult(0.9, 0, "detectifai"), None).provenance == "unknown"
+    )
+    assert VoiceCheckResult(None, None).provenance == "unknown"
+    # When speaker verification is unavailable (no voice registration), authenticity engine provides provenance
+    assert (
+        VoiceCheckResult(None, SpoofResult(0.01, "detectifai")).provenance == "detectifai"
     )
 
 

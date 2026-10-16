@@ -1,5 +1,5 @@
 @echo off
-REM ===== UNCLONE backend - one-time setup (Windows, CPU) =====
+REM ===== UNCLONE backend - one-time setup (Windows, GPU/CPU) =====
 cd /d %~dp0
 echo ==== UNCLONE setup %date% %time% ==== > setup.log
 echo [check] where python / py: >> setup.log
@@ -41,7 +41,17 @@ if not exist .venv\Scripts\python.exe (
 call .venv\Scripts\activate.bat
 echo Installing packages (5-10 minutes)...
 python -m pip install --upgrade pip >> setup.log 2>&1
-pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu >> setup.log 2>&1 || goto :err
+
+where nvidia-smi >nul 2>nul
+if %errorlevel% equ 0 (
+  echo [GPU] NVIDIA GPU detected. Installing PyTorch with CUDA 12.4 support...
+  echo [step] installing torch CUDA 12.4 >> setup.log
+  pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124 >> setup.log 2>&1 || goto :err
+) else (
+  echo [CPU] No NVIDIA GPU detected. Installing PyTorch CPU...
+  echo [step] installing torch CPU >> setup.log
+  pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu >> setup.log 2>&1 || goto :err
+)
 echo [ok] torch >> setup.log
 pip install -r requirements-dev.txt >> setup.log 2>&1 || goto :err
 echo [ok] requirements >> setup.log

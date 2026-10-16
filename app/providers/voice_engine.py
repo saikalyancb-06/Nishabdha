@@ -65,15 +65,30 @@ class VoiceCheckResult:
 
     @property
     def provenance(self) -> str:
-        if self.speaker is None or self.spoof is None:
+        if self.spoof is None:
             return "unknown"
-        scores = (self.speaker.prob, self.spoof.synthetic_prob)
-        if any(not math.isfinite(v) or not 0 <= v <= 1 for v in scores):
+        if (
+            self.spoof.synthetic_prob is None
+            or not math.isfinite(self.spoof.synthetic_prob)
+            or not 0 <= self.spoof.synthetic_prob <= 1
+        ):
             return "unknown"
-        sources = {self.speaker.source, self.spoof.source}
-        if sources == {"detectifai"}:
+        if self.speaker is not None:
+            if (
+                self.speaker.prob is None
+                or not math.isfinite(self.speaker.prob)
+                or not 0 <= self.speaker.prob <= 1
+            ):
+                return "unknown"
+            sources = {self.speaker.source, self.spoof.source}
+            if sources == {"detectifai"}:
+                return "detectifai"
+            if "mock" in sources:
+                return "mock"
+            return "degraded"
+        if self.spoof.source == "detectifai":
             return "detectifai"
-        if "mock" in sources:
+        if self.spoof.source == "mock":
             return "mock"
         return "degraded"
 

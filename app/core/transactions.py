@@ -33,14 +33,15 @@ def valid_evidence(e: dict, call_id: str, action_id: str) -> bool:
     sources = {"detectifai"} | ({"mock"} if s.app_env == "test" else set())
     try:
         age = (utcnow() - datetime.fromisoformat(e["checked_at"])).total_seconds()
+        sp = e.get("speaker_prob")
+        speaker_ok = True if sp is None else (sp >= s.tier1_min_trust and e.get("speaker_source") in sources)
         return bool(
             e["call_id"] == call_id
             and e["action_id"] == action_id
             and e.get("audio_hash")
-            and e.get("speaker_source") in sources
             and e.get("spoof_source") in sources
             and 0 <= age <= 120
-            and e["speaker_prob"] >= s.tier1_min_trust
+            and speaker_ok
             and e["synthetic_prob"] < s.synthetic_soft
         )
     except (KeyError, ValueError, TypeError):

@@ -133,7 +133,11 @@ class TrustState:
     # ------------------------------------------------------------ read
     @property
     def evidence_chunks(self) -> int:
-        return sum(1 for c in self.chunks if c.speaker_prob is not None)
+        return sum(
+            1
+            for c in self.chunks
+            if c.speaker_prob is not None or c.synthetic_prob is not None
+        )
 
     @property
     def recent_synthetic(self) -> float:
@@ -145,8 +149,9 @@ class TrustState:
     @property
     def trust(self) -> float:
         if self.speaker_ema is None:
-            return 0.0
-        t = self.speaker_ema * (1.0 - self.recent_synthetic)
+            t = (1.0 - self.recent_synthetic) if self.chunks else 0.5
+        else:
+            t = self.speaker_ema * (1.0 - self.recent_synthetic)
         if self.locked_reason:
             t = min(t, 0.1)
         return round(max(0.0, min(1.0, t)), 3)
@@ -232,13 +237,6 @@ def decide(
 
     # ---------- tier 1: passive
     if tier == 1:
-        if not enrolled:
-            return Decision(
-                "stepup",
-                trust,
-                ["voice not enrolled - confirm through bank app"],
-                factors,
-            )
         if not engines_ok:
             return Decision(
                 "stepup",
@@ -264,22 +262,20 @@ def decide(
                 "challenge", trust, ["not enough speech yet to verify voice"], factors
             )
         last = state.chunks[-1] if state.chunks else None
-        if last is not None and (
-            last.synthetic_prob is None or last.speaker_prob is None
-        ):
+        if last is not None and last.synthetic_prob is None:
             return Decision(
                 "stepup",
                 trust,
                 ["voice evidence incomplete for latest audio - fail closed"],
                 factors,
             )
-        if state.speaker_ema is not None and state.speaker_ema < s.speaker_reject:
+        if enrolled and state.speaker_ema is not None and state.speaker_ema < s.speaker_reject:
             return Decision(
-                "stepup", trust, ["voice does not match enrolled customer"], factors
+                "stepup", trust, ["voice does not match registered customer"], factors
             )
         if (
             last
-            and last.speaker_prob >= s.tier1_min_trust
+            and (not enrolled or last.speaker_prob is None or last.speaker_prob >= s.tier1_min_trust)
             and last.synthetic_prob < s.synthetic_soft
         ):
             return Decision("allow", trust, ["passive voice check passed"], factors)
@@ -293,7 +289,10 @@ def decide(
     # ---------- tier 2: hard gate
     if not enrolled:
         return Decision(
-            "stepup", trust, ["voice not enrolled - app approval required"], factors
+            "stepup",
+            trust,
+            ["voice identity verification unavailable without reference - app approval required for sensitive action"],
+            factors,
         )
     if liveness is None:
         return Decision(
@@ -315,14 +314,14 @@ def decide(
             [f"challenge answer sounded synthetic (p={sy:.2f})"],
             factors,
         )
-    if sp is not None and sp < s.speaker_reject:
+    if enrolled and sp is not None and sp < s.speaker_reject:
         return Decision(
             "refuse",
             trust,
             [f"challenge answer voice does not match customer (p={sp:.2f})"],
             factors,
         )
-    if sp is None or sy is None:
+    if sy is None:
         reasons.append(
             "voice engines could not score the challenge answer - fail closed"
         )
@@ -332,7 +331,7 @@ def decide(
     # remains a dashboard diagnostic and cannot compensate for a failed check.
     if sy >= s.synthetic_soft:
         reasons.append("challenge authenticity check requires app approval")
-    if sp < s.tier1_min_trust:
+    if enrolled and sp is not None and sp < s.tier1_min_trust:
         reasons.append("challenge speaker check requires app approval")
     if pressure >= 0.5:
         reasons.append("pressure cues require app approval")
@@ -341,5 +340,5 @@ def decide(
     if reasons:
         return Decision("stepup", trust, reasons, factors)
     return Decision(
-        "allow", trust, ["speaker, authenticity and challenge checks passed"], factors
+        "allow", trust, ["authenticity and liveness challenge checks passed"], factors
     )

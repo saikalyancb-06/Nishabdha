@@ -112,7 +112,7 @@ function showTab(name) {
     if (b.dataset.tab === name) b.setAttribute("aria-current", "page");
     else b.removeAttribute("aria-current");
   });
-  ["call", "phone", "desk", "knowledge"].forEach((t) => {
+  ["call", "phone", "desk", "knowledge", "demo"].forEach((t) => {
     const el = $("tab-" + t);
     if (el) el.hidden = t !== name;
   });
@@ -121,6 +121,7 @@ function showTab(name) {
   if (name === "phone") Phone.open();
   if (name === "desk") Desk.open();
   if (name === "knowledge") Knowledge.open();
+  if (name === "demo") JudgeDemo.open();
 }
 
 try {
@@ -219,7 +220,8 @@ const Speaker = {
       Math.max(2, String(m.text || "").split(/\s+/).length * 0.45);
     this.timer = setTimeout(done, (est + 2.5) * 1000); // watchdog
     if (m.audio_mp3_b64) {
-      const a = new Audio("data:audio/mpeg;base64," + m.audio_mp3_b64);
+      const mime = m.audio_mp3_b64.startsWith("UklGR") ? "audio/wav" : "audio/mpeg";
+      const a = new Audio("data:" + mime + ";base64," + m.audio_mp3_b64);
       this.audio = a;
       a.onended = done;
       a.onerror = done;
@@ -729,111 +731,13 @@ $("pCards").addEventListener("click", async (e) => {
   }
 });
 
-// ---------------------------------------------------------------- voice enrollment (from the app)
+// Voice registration removed as callers are verified dynamically (authenticity + liveness + stepup)
 const Enroll = {
   phrases: [],
   clips: [],
   rec: null,
-  async load() {
-    this.clips = [];
-    try {
-      const r = await api(
-        `/api/enrollment/phrases?lang=${encodeURIComponent(cust().lang || "en")}`,
-      );
-      this.phrases = r.phrases.slice(0, 4);
-    } catch {
-      this.phrases = [];
-    }
-    this.render();
-  },
-  render() {
-    $("phrases").innerHTML = this.phrases
-      .map(
-        (p, i) =>
-          `<li class="${i < this.clips.length ? "done" : ""}">${esc(p)}${i < this.clips.length ? " ✓" : ""}</li>`,
-      )
-      .join("");
-    const n = this.clips.length;
-    $("recBtn").textContent = this.rec
-      ? "Stop recording"
-      : n < this.phrases.length
-        ? `Record sentence ${n + 1}`
-        : "All recorded";
-    $("recBtn").disabled = !this.rec && n >= this.phrases.length;
-    $("enrollBtn").disabled = n < 3 || !!this.rec;
-  },
-  async toggle() {
-    if (this.rec) {
-      this.rec.stop();
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: { echoCancellation: true, noiseSuppression: true },
-      });
-      const chunks = [];
-      const mr = new MediaRecorder(stream);
-      mr.ondataavailable = (e) => chunks.push(e.data);
-      mr.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        this.rec = null;
-        const blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
-        const fd = new FormData();
-        fd.append("file", blob, "s.webm");
-        try {
-          const q = await api("/api/audio/quality", {
-            method: "POST",
-            form: fd,
-          });
-          if (q.ok) {
-            this.clips.push(blob);
-            $("enrollMsg").textContent = "Good recording.";
-          } else
-            $("enrollMsg").textContent =
-              "Please record again: " + q.problems.join(", ");
-        } catch (e) {
-          $("enrollMsg").textContent = e.message;
-        }
-        this.render();
-      };
-      mr.start();
-      this.rec = mr;
-      this.render();
-      $("enrollMsg").textContent =
-        "Recording… read the sentence, then press Stop.";
-    } catch (e) {
-      toast("Microphone blocked: " + e.message);
-    }
-  },
-  async save() {
-    const fd = new FormData();
-    this.clips.forEach((b, i) => fd.append("files", b, `s${i}.webm`));
-    $("enrollBtn").disabled = true;
-    $("enrollMsg").textContent = "Saving your voice ID…";
-    try {
-      const r = await api(`/api/customers/${cust().id}/enroll`, {
-        method: "POST",
-        headers: appH(),
-        form: fd,
-      });
-      $("enrollMsg").textContent =
-        `Voice ID saved (${r.engines}).` +
-        (r.warnings?.length ? " Note: " + r.warnings.join("; ") : "");
-      this.clips = [];
-      this.render();
-      Phone.loadMe();
-    } catch (e) {
-      $("enrollMsg").textContent = e.message;
-      this.render();
-    }
-  },
-};
-$("recBtn").onclick = () => Enroll.toggle();
-$("enrollBtn").onclick = () => Enroll.save();
-$("recReset").onclick = () => {
-  Enroll.clips = [];
-  $("enrollMsg").textContent = "";
-  Enroll.render();
+  async load() {},
+  render() {},
 };
 
 // ---------------------------------------------------------------- fraud desk
@@ -1524,12 +1428,246 @@ $("refreshKbBtn").onclick = () => {
   toast("Knowledge base refreshed");
 };
 
+// ---------------------------------------------------------------- judge demo
+const JudgeDemo = {
+  mediaRecorder: null,
+  audioChunks: [],
+
+  async open() {
+    try {
+      const res = await api("/api/judge-demo/status");
+      if (res.device) {
+        $("demoHwBadge").textContent = res.device.toUpperCase() + " Accelerated";
+        $("demoHwBadge").style.background = res.device.includes("cuda") ? "#0f7a5c" : "#4f6b61";
+      }
+      if (res.detectifai_configured) {
+        $("demoDetectBadge").textContent = "DetectifAI API (Configured & Live)";
+        $("demoDetectBadge").className = "pill";
+      } else {
+        $("demoDetectBadge").textContent = "Deterministic Anti-Spoof (Fallback)";
+        $("demoDetectBadge").className = "pill warn";
+      }
+      if (res.stt_provider) {
+        $("demoSttBadge").textContent = res.stt_provider === "sarvam" ? "Sarvam AI (saaras:v4)" : res.stt_provider.toUpperCase();
+      }
+    } catch (e) {
+      console.warn("judge demo status failed:", e);
+    }
+  },
+
+  renderResult(res) {
+    const outcome = res.policy_decision || "UNKNOWN";
+    const badge = $("demoOutcomeBadge");
+    const outcomeEl = $("demoFinalOutcome");
+    badge.textContent = outcome;
+    outcomeEl.textContent = outcome;
+
+    if (outcome === "ALLOW" || outcome === "EXECUTED") {
+      badge.className = "pill";
+      badge.style.background = "#e6f4ef";
+      badge.style.color = "#0f7a5c";
+      outcomeEl.style.color = "#0f7a5c";
+    } else if (outcome === "BLOCK" || outcome.includes("REFUSE")) {
+      badge.className = "pill bad";
+      outcomeEl.style.color = "var(--danger)";
+    } else {
+      badge.className = "pill warn";
+      outcomeEl.style.color = "var(--warn)";
+    }
+
+    $("demoExplanation").textContent = res.explanation || "Evaluation complete.";
+    const mut = res.state_diff && res.state_diff.mutation_detected;
+    $("demoStateProof").textContent = mut ? "STATE MUTATED" : "ZERO MUTATION (Verified Unchanged)";
+    $("demoStateProof").style.color = mut ? "var(--danger)" : "#0f7a5c";
+    $("demoLatency").textContent = res.latency_ms ? res.latency_ms + " ms" : "–";
+
+    // Render 9-stage visual timeline
+    const tlEl = $("demoTimeline");
+    if (!res.timeline || res.timeline.length === 0) {
+      tlEl.innerHTML = '<div class="empty">No timeline data returned.</div>';
+      return;
+    }
+
+    tlEl.innerHTML = res.timeline.map((st) => {
+      let stColor = "#0f7a5c";
+      let stBg = "var(--accent-soft)";
+      let stBorder = "var(--line)";
+      const s = String(st.status || "").toUpperCase();
+      if (s.includes("FLAG") || s.includes("BLOCK") || s.includes("REFUSE") || s.includes("FAILED")) {
+        stColor = "var(--danger)";
+        stBg = "var(--danger-soft)";
+        stBorder = "#ffccd0";
+      } else if (s.includes("HELD") || s.includes("REQUIRE") || s.includes("CHECK") || s.includes("WARN")) {
+        stColor = "var(--warn)";
+        stBg = "var(--warn-soft)";
+        stBorder = "#ffe6b3";
+      }
+
+      const detailsHtml = Object.entries(st.details || {})
+        .map(([k, v]) => `<div><span style="color:var(--muted);">${esc(k)}:</span> <strong>${esc(typeof v === 'object' ? JSON.stringify(v) : v)}</strong></div>`)
+        .join("");
+
+      return `
+        <div style="background:#fff; border:1px solid ${stBorder}; border-left:4px solid ${stColor}; border-radius:10px; padding:10px 12px; font-size:0.83rem;">
+          <div class="row between" style="margin-bottom:4px;">
+            <div>
+              <span class="lbl" style="color:var(--muted); margin-right:6px;">STAGE 0${st.stage}</span>
+              <strong>${esc(st.name)}</strong>
+            </div>
+            <span class="pill" style="background:${stBg}; color:${stColor}; font-size:0.72rem;">${esc(st.status)}</span>
+          </div>
+          <div style="margin-bottom:6px; color:var(--muted); font-size:0.78rem;">
+            Provenance: <em>${esc(st.provenance)}</em> &middot; ${esc(st.timestamp || "")}
+          </div>
+          <div style="background:var(--bg); border-radius:8px; padding:6px 10px; font-size:0.78rem; display:grid; gap:2px;">
+            ${detailsHtml}
+          </div>
+        </div>
+      `;
+    }).join("");
+  },
+
+  async runScenario(id) {
+    try {
+      $("demoFinalOutcome").textContent = "Evaluating scenario with live engines...";
+      $("demoOutcomeBadge").textContent = "PROCESSING";
+      $("demoOutcomeBadge").className = "pill warn";
+      toast("Running " + id + "...");
+      const res = await api("/api/judge-demo/run", {
+        method: "POST",
+        body: { scenario_id: id, customer_id: $("customer").value || "cus_ananya" }
+      });
+      this.renderResult(res);
+      toast("Evaluation finished: " + (res.policy_decision || "DONE"));
+    } catch (e) {
+      toast("Scenario execution failed: " + e.message);
+      $("demoFinalOutcome").textContent = "Error: " + e.message;
+    }
+  },
+
+  async runText(text) {
+    if (!text.trim()) return;
+    try {
+      $("demoFinalOutcome").textContent = "Analyzing input through deterministic policy...";
+      $("demoOutcomeBadge").textContent = "PROCESSING";
+      $("demoOutcomeBadge").className = "pill warn";
+      toast("Evaluating simulated attack text...");
+      const res = await api("/api/judge-demo/run", {
+        method: "POST",
+        body: { custom_text: text, customer_id: $("customer").value || "cus_ananya" }
+      });
+      this.renderResult(res);
+      toast("Text evaluation finished: " + (res.policy_decision || "DONE"));
+    } catch (e) {
+      toast("Text evaluation failed: " + e.message);
+      $("demoFinalOutcome").textContent = "Error: " + e.message;
+    }
+  },
+
+  async resetState() {
+    if (!confirm("Reset customer balances and card states to baseline? Permanent audit logs and tickets will be preserved.")) return;
+    try {
+      const res = await api("/api/judge-demo/reset", { method: "POST" });
+      toast(res.message || "Demo state reset successfully.");
+      $("demoFinalOutcome").textContent = "Demo environment reset to clean baseline.";
+      $("demoStateProof").textContent = "Restored to Baseline";
+      $("demoStateProof").style.color = "#0f7a5c";
+      $("demoTimeline").innerHTML = '<div class="empty">Ready for fresh scenario. Balances restored.</div>';
+      $("demoOutcomeBadge").textContent = "READY FOR TEST";
+      $("demoOutcomeBadge").className = "pill grey";
+    } catch (e) {
+      toast("Reset failed: " + e.message);
+    }
+  },
+
+  async startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.audioChunks = [];
+      this.mediaRecorder = new MediaRecorder(stream);
+      this.mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) this.audioChunks.push(e.data);
+      };
+      this.mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(this.audioChunks, { type: "audio/wav" });
+        stream.getTracks().forEach((t) => t.stop());
+        await this.submitAudio(audioBlob);
+      };
+      this.mediaRecorder.start();
+      $("demoMicState").textContent = "Recording Live Audio...";
+      $("demoMicState").className = "pill bad";
+      $("btnDemoMicRecord").style.display = "none";
+      $("btnDemoMicStop").style.display = "block";
+    } catch (e) {
+      toast("Microphone access denied: " + e.message);
+    }
+  },
+
+  stopRecording() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+      this.mediaRecorder.stop();
+      $("demoMicState").textContent = "Analyzing speech & authenticity...";
+      $("demoMicState").className = "pill warn";
+      $("btnDemoMicRecord").style.display = "block";
+      $("btnDemoMicStop").style.display = "none";
+    }
+  },
+
+  async submitAudio(blob) {
+    try {
+      $("demoFinalOutcome").textContent = "Processing speech recognition & DetectifAI deepfake checks...";
+      $("demoOutcomeBadge").textContent = "PROCESSING";
+      $("demoOutcomeBadge").className = "pill warn";
+      const form = new FormData();
+      form.append("file", blob, "live_mic.wav");
+      form.append("customer_id", $("customer").value || "cus_ananya");
+      const res = await api("/api/judge-demo/run", { method: "POST", form });
+      $("demoMicState").textContent = "Completed";
+      $("demoMicState").className = "pill";
+      this.renderResult(res);
+      toast("Live speech processed: " + (res.policy_decision || "DONE"));
+    } catch (e) {
+      $("demoMicState").textContent = "Error";
+      $("demoMicState").className = "pill bad";
+      toast("Audio analysis failed: " + e.message);
+      $("demoFinalOutcome").textContent = "Error: " + e.message;
+    }
+  }
+};
+
+const elReset = $("btnResetDemoState");
+if (elReset) elReset.onclick = () => JudgeDemo.resetState();
+const elD1 = $("btnDemo1");
+if (elD1) elD1.onclick = () => JudgeDemo.runScenario("demo1_legitimate_balance");
+const elD2 = $("btnDemo2");
+if (elD2) elD2.onclick = () => JudgeDemo.runScenario("demo2_human_scammer");
+const elD3 = $("btnDemo3");
+if (elD3) elD3.onclick = () => JudgeDemo.runScenario("demo3_voice_clone");
+const elD4 = $("btnDemo4");
+if (elD4) elD4.onclick = () => JudgeDemo.runScenario("demo4_unauthorized_action");
+const elRec = $("btnDemoMicRecord");
+if (elRec) elRec.onclick = () => JudgeDemo.startRecording();
+const elStop = $("btnDemoMicStop");
+if (elStop) elStop.onclick = () => JudgeDemo.stopRecording();
+const elSimForm = $("demoSimForm");
+if (elSimForm) elSimForm.onsubmit = (e) => {
+  e.preventDefault();
+  JudgeDemo.runText($("demoSimInput").value);
+};
+
 // ---------------------------------------------------------------- boot
 (async function boot() {
+  try {
+    const h = await fetch("/api/health").then(r => r.json()).catch(() => null);
+    if (h && h.demo_staff_key && !$("staffKey").value) {
+      $("staffKey").value = h.demo_staff_key;
+      sessionStore.set("staffKey", h.demo_staff_key);
+    }
+  } catch {}
   await loadCustomers();
   const c = cust();
   if (c.lang) $("lang").value = c.lang;
   Enroll.load();
-  const tab = store.get("tab", "call");
-  showTab(["call", "phone", "desk", "knowledge"].includes(tab) ? tab : "call");
+  const tab = store.get("tab", "demo");
+  showTab(["call", "phone", "desk", "knowledge", "demo"].includes(tab) ? tab : "demo");
 })();

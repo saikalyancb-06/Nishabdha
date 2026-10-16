@@ -37,9 +37,10 @@ async def health():
         "uptime_s": int(time.time() - STARTED),
         "live_calls": len(SESSIONS),
         "voice": eng.status(),
-        "stt": {"provider": s.stt_provider, "fallback": s.stt_fallback, "groq_key": bool(s.groq_api_key), "breaker": get_stt().breaker.status()},
+        "stt": {"provider": s.stt_provider, "fallback": s.stt_fallback, "groq_key": bool(s.effective_groq_key), "sarvam_key": bool(s.effective_sarvam_key), "breaker": get_stt().breaker.status()},
         "tts": {"provider": s.tts_provider, "breaker": get_tts().breaker.status()},
         "llm": {"provider": s.llm_provider, "model": get_llm().model, "available": get_llm().available, "breaker": get_llm().breaker.status()},
+        "device": s.resolved_device,
     }
 
 
@@ -240,7 +241,11 @@ async def audit_list(call_id: str | None = None, limit: int = Query(200, ge=1, l
 @router.get("/admin/config", dependencies=[Depends(require_staff)])
 async def admin_config():
     s = get_settings()
-    hide = {"staff_api_key", "audit_hmac_secret", "groq_api_key", "openai_api_key", "anthropic_api_key", "gemini_api_key", "detectifai_api_key"}
+    hide = {
+        "staff_api_key", "audit_hmac_secret", "groq_api_key", "groq_api_key1",
+        "groq_api_key2", "groq_api_key3", "openai_api_key", "anthropic_api_key",
+        "gemini_api_key", "detectifai_api_key", "sarvam_api_key", "sarvam_ai_api"
+    }
     return {k: ("***" if k in hide and v else v) for k, v in s.model_dump(mode="json").items()}
 
 

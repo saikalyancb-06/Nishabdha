@@ -33,7 +33,7 @@ import {
 } from "./components/ui/alert-dialog";
 import workspace from "./workspace.html?raw";
 const PolicyAssistant = lazy(() => import("./PolicyAssistant"));
-type Tab = "call" | "phone" | "desk" | "knowledge";
+type Tab = "call" | "phone" | "desk" | "knowledge" | "demo";
 type Transfer = {
   amount_paise: number;
   payee_name: string;
@@ -79,6 +79,14 @@ const pages = {
     description:
       "Explore approved policies and review new sources before they reach a caller.",
   },
+  demo: {
+    label: "Judge Demo",
+    icon: Sparkles,
+    eyebrow: "LIVE EVALUATION & VERIFICATION",
+    title: "Unclone Agent Guard Demo",
+    description:
+      "Live demonstration mode for hackathon judging: 4 core attack scenarios, live microphone input, 9-stage verification timeline, and deterministic action gateway enforcement.",
+  },
 };
 const Workspace = memo(function Workspace() {
   const host = useRef<HTMLDivElement>(null);
@@ -119,7 +127,7 @@ const Workspace = memo(function Workspace() {
   );
 });
 export default function App() {
-  const [tab, setTab] = useState<Tab>("call");
+  const [tab, setTab] = useState<Tab>("demo");
   const [mobile, setMobile] = useState(false);
   const [compact, setCompact] = useState(
     () => matchMedia("(max-width:760px)").matches,

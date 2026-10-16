@@ -48,12 +48,25 @@ class LocalSpeaker:
                     from speechbrain.inference.speaker import EncoderClassifier
                     from speechbrain.utils.fetching import LocalStrategy
 
-                    self._model = EncoderClassifier.from_hparams(
-                        source=self.s.local_speaker_model,
-                        savedir=str(self.s.model_dir / "ecapa"),
-                        run_opts={"device": "cpu"},
-                        local_strategy=LocalStrategy.COPY,  # Windows: no symlink privileges needed
-                    )
+                    dev = self.s.resolved_device
+                    try:
+                        self._model = EncoderClassifier.from_hparams(
+                            source=self.s.local_speaker_model,
+                            savedir=str(self.s.model_dir / "ecapa"),
+                            run_opts={"device": dev},
+                            local_strategy=LocalStrategy.COPY,  # Windows: no symlink privileges needed
+                        )
+                    except Exception as e:
+                        if dev != "cpu":
+                            log.warning("speaker model failed on %s (%s), falling back to cpu", dev, e)
+                            self._model = EncoderClassifier.from_hparams(
+                                source=self.s.local_speaker_model,
+                                savedir=str(self.s.model_dir / "ecapa"),
+                                run_opts={"device": "cpu"},
+                                local_strategy=LocalStrategy.COPY,
+                            )
+                        else:
+                            raise
                 except Exception as e:  # pragma: no cover - depends on env
                     self.load_error = f"{type(e).__name__}: {e}"
                     raise ProviderError(f"local speaker model unavailable: {self.load_error}") from e
@@ -120,12 +133,21 @@ class LocalSpoof:
                 _limit_threads()
                 from transformers import pipeline
 
+                dev = 0 if self.s.resolved_device == "cuda" else -1
                 for m in self.s.spoof_model_list:
                     try:
-                        self._pipes[m] = pipeline("audio-classification", model=m, device=-1, model_kwargs={"cache_dir": str(self.s.model_dir / "hf")})
-                    except Exception as e:  # pragma: no cover
-                        self.load_errors[m] = f"{type(e).__name__}: {e}"
-                        log.error("spoof model %s failed to load: %s", m, e)
+                        self._pipes[m] = pipeline("audio-classification", model=m, device=dev, model_kwargs={"cache_dir": str(self.s.model_dir / "hf")})
+                    except Exception as e:
+                        if dev != -1:
+                            log.warning("spoof model %s failed on GPU (%s), falling back to CPU", m, e)
+                            try:
+                                self._pipes[m] = pipeline("audio-classification", model=m, device=-1, model_kwargs={"cache_dir": str(self.s.model_dir / "hf")})
+                            except Exception as e2:  # pragma: no cover
+                                self.load_errors[m] = f"{type(e2).__name__}: {e2}"
+                                log.error("spoof model %s failed to load: %s", m, e2)
+                        else:  # pragma: no cover
+                            self.load_errors[m] = f"{type(e).__name__}: {e}"
+                            log.error("spoof model %s failed to load: %s", m, e)
                 if not self._pipes:
                     raise ProviderError(f"no local spoof model could be loaded: {self.load_errors}")
         return self._pipes

@@ -33,6 +33,35 @@ DEMO = [
 ]
 
 
+async def reset_demo_state() -> dict:
+    """Reset customer balances, cards, and session states without wiping audit history."""
+    from sqlalchemy import select
+    from app.models import StepUp, Challenge
+    async with session_scope() as db:
+        for d in DEMO:
+            c = await db.get(Customer, d["id"])
+            if c:
+                c.voice_locked = False
+            acc = await db.get(Account, f"acc_{d['id'][4:]}")
+            if acc:
+                acc.balance_paise = d["account"][1]
+            for last4, kind, limit in d["cards"]:
+                card = (
+                    await db.execute(
+                        select(Card).where(Card.customer_id == d["id"], Card.last4 == last4)
+                    )
+                ).scalar_one_or_none()
+                if card:
+                    card.daily_limit_paise = limit
+                    card.status = "active"
+                    card.international_enabled = False
+        for st in (await db.execute(select(StepUp).where(StepUp.status == "pending"))).scalars():
+            st.status = "expired"
+        for ch in (await db.execute(select(Challenge).where(Challenge.status == "pending"))).scalars():
+            ch.status = "expired"
+    return {"status": "ok", "message": "Demo state reset to initial seed values."}
+
+
 async def reset_demo() -> dict:
     async with engine.begin() as conn:
         for table in reversed(Base.metadata.sorted_tables):

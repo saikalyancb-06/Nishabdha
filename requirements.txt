@@ -1,6 +1,7 @@
 # Python 3.11 or 3.12 recommended (3.10-3.13 work).
-# Install torch FIRST from the CPU index (setup.bat does this):
-#   pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+# Install torch FIRST (setup.bat auto-detects GPU):
+#   GPU (e.g. RTX 4060): pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+#   CPU:                pip install torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
 fastapi==0.115.12
 uvicorn[standard]==0.34.2
 pydantic>=2.10,<3
